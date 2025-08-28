@@ -6,12 +6,14 @@ const agents: Agent[] = [
     id: '1',
     name: 'Demo 2',
     provider: 'anthropic',
+    description: 'En demo agent som pratar svenska',
     prompt: 'Hej hej hej',
   },
   {
     id: '2',
     name: 'Demo 1',
     provider: 'openai',
+    description: 'A demo agent that speaks English',
     prompt: 'Hello hello hello',
   },
 ];
@@ -31,6 +33,7 @@ router.post('/', (req, res) => {
   const newAgent: Agent = {
     id: (agents.length + 1).toString(),
     name,
+    description: '',
     prompt,
     provider,
   };
@@ -40,10 +43,10 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { name, prompt, provider } = req.body;
+  const { name, prompt, description, provider } = req.body;
   const agentIndex = agents.findIndex((agent) => agent.id === id);
   if (agentIndex !== -1) {
-    agents[agentIndex] = { id, name, prompt, provider };
+    agents[agentIndex] = { id, name, description, prompt, provider };
     res.json(agents[agentIndex]);
   } else {
     res.status(404).json({ message: 'Agent not found' });

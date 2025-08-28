@@ -9,6 +9,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { Agent } from '@pkg/types';
+import AgentChatPage from './Chat';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, {
@@ -53,6 +54,9 @@ function PageShell({
           <nav className="text-sm text-slate-600 flex items-center gap-4">
             <Link to="/agents" className="hover:text-slate-900">
               Agents
+            </Link>
+            <Link to="/chat" className="hover:text-slate-900">
+              Chat
             </Link>
           </nav>
         </div>
@@ -356,6 +360,7 @@ function AppRouter() {
         <Route path="/agents" element={<AgentListPage />} />
         <Route path="/agents/new" element={<AgentFormPage />} />
         <Route path="/agents/:id" element={<AgentFormPage />} />
+        <Route path="/chat" element={<AgentChatPage />} />
         <Route path="*" element={<RedirectToAgents />} />
       </Routes>
     </BrowserRouter>

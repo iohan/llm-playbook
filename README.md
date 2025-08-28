@@ -1,31 +1,27 @@
 # LLM Agent Playbook (MVP)
 
-Ett monorepo för att snabbt bygga och testa LLM-agenter. Frontend (React + Vite) och backend (Express) lever i samma repo men körs separat under utveckling och i produktion. Delade TypeScript-typer bor i ett eget paket.
+A monorepo for building and testing LLM agents quickly. Frontend (React + Vite) and backend (Express) exists in the same repo but run separately during development and in production. Shared TypeScript types exists in their own package.
 
-## Innehåll
+## Content
 
 - **apps/web** – React + Vite (TypeScript)
 - **apps/api** – Express (TypeScript)
-- **packages/types** – Delade typer mellan web & api
+- **packages/types** – Shared types between web and api
 
-## Krav
+## Requirements
 
-- **Node.js**: rekommenderat LTS (v22)  
-- **pnpm**: v9+ (aktivera via `corepack enable`)
+- **Node.js**: recommended LTS (v22)  
+- **pnpm**: v9+
 
-```bash
-corepack enable
-corepack prepare pnpm@9 --activate
-```
 
-## Kom igång (lokal utveckling)
+## Get started (local development)
 
-Installera beroenden i hela monorepot:
+Install dependencies for the whole monorepo:
 ```bash
 pnpm install
 ```
 
-Starta API:
+Start API:
 ```bash
 pnpm dev:api
 # -> http://localhost:4000
@@ -35,36 +31,36 @@ Starta Web:
 ```bash
 pnpm dev:web
 # -> http://localhost:5173
-# Vite proxar /api till http://localhost:4000 (se vite.config.ts)
+# Vite proxy /api to http://localhost:4000 (check out vite.config.ts)
 ```
 
-### Hälsokontroller & rutter (MVP)
+### Health checks & example endpoints
 
 - **API health**: `GET http://localhost:4000/health`  
-- **Exempelagenter**: `GET http://localhost:4000/api/agents` (stub i MVP)
+- **Example agent**: `GET http://localhost:4000/api/agents`
 
-## Bygga för produktion
+## Build for production
 
-Bygg båda apparna:
+Build both web and api:
 ```bash
 pnpm build
-# eller separat:
+# or separately: 
 pnpm build:api
 pnpm build:web
 ```
 
-- **Frontend**: statiska filer i `apps/web/dist/`  
-- **Backend**: bundlad server i `apps/api/dist/index.js`
+- **Frontend**: static files in `apps/web/dist/`  
+- **Backend**: bundled server in `apps/api/dist/index.js`
 
-I produktion körs de separat. Sätt gärna `CORS_ORIGIN` i backend om UI hostas på annan domän.
+In production, serve the static files from a web server (e.g. Nginx) or a CDN. The backend can be run with `node apps/api/dist/index.js`. Put `CORS_ORIGIN` in environment if web is hosted on a different domain.
 
-## Delade typer
+## Shared types
 
-Delade typer finns i **`packages/types`** och publiceras i workspacen som `@pkg/types`.
+Share types can be found in **`packages/types`** and is published in the workspace as `@pkg/types`.
 
-### Uppdatera eller lägga till en typ
+### Update or add types
 
-1) Redigera/addera i `packages/types/src/*.ts`. Exempel:
+1) Edit `packages/types/src/*.ts`. Example:
 ```ts
 // packages/types/src/index.ts
 export type Agent = {
@@ -79,14 +75,13 @@ export type Agent = {
 };
 ```
 
-2) (Valfritt) Bygg typpaketet om du vill generera `.d.ts`/dist:
+2) (Optional) Build package if you want to generate `.d.ts`/dist:
 ```bash
 pnpm --filter @pkg/types build
 ```
+> Under development, TypeScript-resolver in web/api points directly to `src` via `tsconfig.paths`, so you normally **do not** need to build for web/api to pick up new types – a restart of the dev server or TS server in your editor is usually enough.
 
-> Under utveckling pekar TypeScript-resolvern direkt mot `src` via `tsconfig.paths`, så du behöver normalt **inte** builda för att web/api ska få in nya typer – en omstart av dev-server eller TS-server i editorn räcker oftast.
-
-### Använd i web eller api
+### Use types in web/api
 
 ```ts
 import type { Agent } from "@pkg/types";
@@ -109,26 +104,8 @@ import type { Agent } from "@pkg/types";
 
 ## ESLint & Prettier
 
-Kör lokalt eller i CI:
+Run locally or in CI:
 ```bash
 pnpm lint
 pnpm format
 ```
-
-## Felsökning (snabb)
-
-- **`http://localhost:5173` visar 404/blankt**  
-  Se att `apps/web/index.html` finns i mapproten för web (inte i `src/`), och att dev-servern visar en Local-URL i terminalen.
-- **CORS** vid separat hosting  
-  Sätt `CORS_ORIGIN` i API (kommaseparerad lista) till din frontend-domän.
-- **Typer hittas inte**  
-  Se att `packages/types/package.json` heter `"name": "@pkg/types"` och att `pnpm install` är kört i repo-roten.
-
-## Vad projektet ska åstadkomma (MVP-mål)
-
-- Skapa, lista och redigera **LLM-agenter** (prompt, policy, provider, verktyg).  
-- **Testa agenter** via API och analysera svar i UI.  
-- Delade **TypeScript-typer** för robustare kontrakt mellan frontend och backend.  
-- Enkel drift: separata build-artefakter för web och api.
-
-> Databas/migrationer är medvetet bortplockat i MVP för snabb start. Persistens kan läggas till senare (t.ex. SQLite + SQL-migrationer) utan att ändra API-kontrakt eller UI.

@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import { healthHandler } from './routes/health.js';
 import agentsRouter from './routes/agents-router.js';
+import chatRouter from './routes/chat-router.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.get('/health', healthHandler);
 
 app.use('/api/agents', agentsRouter);
+app.use('/api/chat', chatRouter);
 
 const port = Number(process.env.PORT ?? 4000);
 app.listen(port, () => {

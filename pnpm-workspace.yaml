@@ -3,5 +3,6 @@ packages:
   - packages/*
 
 ignoredBuiltDependencies:
+  - '@tailwindcss/oxide'
   - esbuild
   - sqlite3

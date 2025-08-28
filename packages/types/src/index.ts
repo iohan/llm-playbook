@@ -9,9 +9,9 @@ export type Agent = {
   id: string;
   name: string;
   prompt: string;
-  policy: string;
+  //policy: string;
   provider: 'openai' | 'anthropic' | 'local' | string;
-  tools: string[];
-  createdAt: string;
-  updatedAt: string;
+  //tools: string[];
+  //createdAt: string;
+  //updatedAt: string;
 };

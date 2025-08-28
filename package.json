@@ -1,0 +1,18 @@
+{
+  "name": "playbook",
+  "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @app/web dev",
+    "dev:api": "pnpm --filter @app/api dev",
+    "build": "pnpm -r build",
+    "build:web": "pnpm --filter @app/web build",
+    "build:api": "pnpm --filter @app/api build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

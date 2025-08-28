@@ -10,7 +10,7 @@ export type Agent = {
   name: string;
   prompt: string;
   //policy: string;
-  provider: 'openai' | 'anthropic' | 'local' | string;
+  provider: 'openai' | 'anthropic';
   //tools: string[];
   //createdAt: string;
   //updatedAt: string;

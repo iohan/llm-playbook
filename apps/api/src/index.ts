@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 import { healthHandler } from './routes/health.js';
+import agentsRouter from './routes/agents-router.js';
 
 const app = express();
 
@@ -12,21 +13,7 @@ app.use(express.json());
 // Healthcheck
 app.get('/health', healthHandler);
 
-// Exempel på enkel agents-route (stub)
-app.get('/api/agents', (_req, res) => {
-  res.json([
-    {
-      id: '1',
-      name: 'Demo 2',
-      prompt: 'Hej hej hej',
-      policy: '',
-      provider: 'local',
-      tools: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
-});
+app.use('/api/agents', agentsRouter);
 
 const port = Number(process.env.PORT ?? 4000);
 app.listen(port, () => {

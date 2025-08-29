@@ -1,5 +1,6 @@
 import { Agent, ChatMessage, ChatRole } from '@pkg/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Page from './components/reusables/Page';
 
 async function fetchAgents(): Promise<Agent[]> {
   const res = await fetch(`/api/agents`);
@@ -123,120 +124,122 @@ export default function AgentChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] w-full grid grid-cols-12 gap-4 p-4">
-      <aside className="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2">
-        <div className="bg-white/70 dark:bg-zinc-900/50 backdrop-blur rounded-2xl shadow p-3 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold">Agenter</h2>
-            {loadingAgents && <span className="text-xs text-zinc-500">Laddar…</span>}
-          </div>
-
-          {agentError && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 mb-2">
-              {agentError}
+    <Page title="Agent Chat">
+      <div className="h-[calc(100vh-4rem)] w-full grid grid-cols-12 gap-4 p-4">
+        <aside className="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2">
+          <div className="bg-white/70 dark:bg-zinc-900/50 backdrop-blur rounded-2xl shadow p-3 h-full flex flex-col">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-semibold">Agenter</h2>
+              {loadingAgents && <span className="text-xs text-zinc-500">Laddar…</span>}
             </div>
-          )}
 
-          <div className="overflow-auto space-y-1">
-            {agents.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => handleSelectAgent(a.id)}
-                className={classNames(
-                  'w-full text-left px-3 py-2 rounded-xl border transition',
-                  selectedAgentId === a.id
-                    ? 'bg-zinc-100 dark:bg-zinc-800 border-zinc-300'
-                    : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/40 border-transparent',
-                )}
-                title={a.description ?? undefined}
-              >
-                <div className="font-medium truncate">{a.name}</div>
-                {a.description && (
-                  <div className="text-xs text-zinc-500 line-clamp-2">{a.description}</div>
-                )}
-              </button>
-            ))}
-
-            {!loadingAgents && agents.length === 0 && (
-              <div className="text-sm text-zinc-500 p-2">
-                No active agents. Create one in the Playbooks list.
+            {agentError && (
+              <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 mb-2">
+                {agentError}
               </div>
             )}
-          </div>
-        </div>
-      </aside>
 
-      <main className="col-span-12 md:col-span-9 lg:col-span-9 xl:col-span-10">
-        <div className="h-full bg-white/70 dark:bg-zinc-900/50 backdrop-blur rounded-2xl shadow flex flex-col">
-          <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
-            <div className="flex-1">
-              <div className="text-sm text-zinc-500">Chattar med</div>
-              <div className="text-lg font-semibold">
-                {selectedAgent ? selectedAgent.name : '— Choose agent in the list —'}
-              </div>
+            <div className="overflow-auto space-y-1">
+              {agents.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => handleSelectAgent(a.id)}
+                  className={classNames(
+                    'w-full text-left px-3 py-2 rounded-xl border transition',
+                    selectedAgentId === a.id
+                      ? 'bg-zinc-100 dark:bg-zinc-800 border-zinc-300'
+                      : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/40 border-transparent',
+                  )}
+                  title={a.description ?? undefined}
+                >
+                  <div className="font-medium truncate">{a.name}</div>
+                  {a.description && (
+                    <div className="text-xs text-zinc-500 line-clamp-2">{a.description}</div>
+                  )}
+                </button>
+              ))}
+
+              {!loadingAgents && agents.length === 0 && (
+                <div className="text-sm text-zinc-500 p-2">
+                  No active agents. Create one in the Playbooks list.
+                </div>
+              )}
             </div>
-            {selectedAgent && (
-              <button
-                onClick={() => {
-                  if (messages.length === 0 || confirm('Clear conversation?')) {
-                    setMessages([]);
-                    setChatError(null);
+          </div>
+        </aside>
+
+        <main className="col-span-12 md:col-span-9 lg:col-span-9 xl:col-span-10">
+          <div className="h-full bg-white/70 dark:bg-zinc-900/50 backdrop-blur rounded-2xl shadow flex flex-col">
+            <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
+              <div className="flex-1">
+                <div className="text-sm text-zinc-500">Chattar med</div>
+                <div className="text-lg font-semibold">
+                  {selectedAgent ? selectedAgent.name : '— Choose agent in the list —'}
+                </div>
+              </div>
+              {selectedAgent && (
+                <button
+                  onClick={() => {
+                    if (messages.length === 0 || confirm('Clear conversation?')) {
+                      setMessages([]);
+                      setChatError(null);
+                    }
+                  }}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            <div className="flex-1 overflow-auto p-4 space-y-3">
+              {messages.map((m) => (
+                <MessageBubble key={m.id} message={m} />
+              ))}
+              {isSending && (
+                <div className="flex items-center gap-2 text-sm text-zinc-500">
+                  <span className="inline-block h-2 w-2 rounded-full bg-zinc-400 animate-pulse" />
+                  Agent writes…
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+
+            {chatError && <div className="px-4 pb-2 text-sm text-red-600">{chatError}</div>}
+
+            <div className="p-3 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-end gap-2">
+                <textarea
+                  className="flex-1 resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-zinc-900"
+                  placeholder={
+                    selectedAgent
+                      ? 'Type a message… (Shift+Enter = ny rad)'
+                      : 'Choose an agent to begin'
                   }
-                }}
-                className="text-sm px-3 py-1.5 rounded-lg border border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-
-          <div className="flex-1 overflow-auto p-4 space-y-3">
-            {messages.map((m) => (
-              <MessageBubble key={m.id} message={m} />
-            ))}
-            {isSending && (
-              <div className="flex items-center gap-2 text-sm text-zinc-500">
-                <span className="inline-block h-2 w-2 rounded-full bg-zinc-400 animate-pulse" />
-                Agent writes…
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows={3}
+                  disabled={!selectedAgent || isSending}
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={!selectedAgent || !input.trim() || isSending}
+                  className={classNames(
+                    'px-4 py-2 rounded-xl font-medium border transition',
+                    !selectedAgent || !input.trim() || isSending
+                      ? 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
+                      : 'bg-indigo-600 text-white border-indigo-600 hover:brightness-110',
+                  )}
+                >
+                  Send
+                </button>
               </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-
-          {chatError && <div className="px-4 pb-2 text-sm text-red-600">{chatError}</div>}
-
-          <div className="p-3 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-end gap-2">
-              <textarea
-                className="flex-1 resize-none rounded-xl border border-zinc-300 dark:border-zinc-700 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-zinc-900"
-                placeholder={
-                  selectedAgent
-                    ? 'Type a message… (Shift+Enter = ny rad)'
-                    : 'Choose an agent to begin'
-                }
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                rows={3}
-                disabled={!selectedAgent || isSending}
-              />
-              <button
-                onClick={handleSend}
-                disabled={!selectedAgent || !input.trim() || isSending}
-                className={classNames(
-                  'px-4 py-2 rounded-xl font-medium border transition',
-                  !selectedAgent || !input.trim() || isSending
-                    ? 'bg-zinc-200 text-zinc-500 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white border-indigo-600 hover:brightness-110',
-                )}
-              >
-                Send
-              </button>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </Page>
   );
 }
 

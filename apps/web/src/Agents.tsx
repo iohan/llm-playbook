@@ -10,6 +10,8 @@ import {
 } from 'react-router-dom';
 import { Agent } from '@pkg/types';
 import AgentChatPage from './Chat';
+import Navbar from './components/reusables/navbar';
+import Page from './components/reusables/Page';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, {
@@ -34,43 +36,6 @@ const AgentsAPI = {
   archive: (id: string) =>
     api<Agent>(`/agents/${id}`, { method: 'PATCH', body: JSON.stringify({ archived: true }) }),
 };
-
-function PageShell({
-  title,
-  actions,
-  children,
-}: {
-  title: string;
-  actions?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
-          <Link to="/agents" className="text-xl font-semibold tracking-tight">
-            LLM Agent Playbook
-          </Link>
-          <nav className="text-sm text-slate-600 flex items-center gap-4">
-            <Link to="/agents" className="hover:text-slate-900">
-              Agents
-            </Link>
-            <Link to="/chat" className="hover:text-slate-900">
-              Chat
-            </Link>
-          </nav>
-        </div>
-      </header>
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-          {actions}
-        </div>
-        <div className="">{children}</div>
-      </main>
-    </div>
-  );
-}
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -108,7 +73,7 @@ function AgentListPage() {
   }, []);
 
   return (
-    <PageShell
+    <Page
       title="Agents"
       actions={
         <div className="flex items-center gap-2">
@@ -165,7 +130,7 @@ function AgentListPage() {
           ))}
         </ul>
       )}
-    </PageShell>
+    </Page>
   );
 }
 
@@ -231,7 +196,7 @@ function AgentFormPage() {
   }
 
   return (
-    <PageShell
+    <Page
       title={isNew ? 'New agent' : agent?.name ? `Edit: ${agent.name}` : 'Loading…'}
       actions={
         <div className="flex items-center gap-2">
@@ -253,7 +218,7 @@ function AgentFormPage() {
       ) : (
         <AgentForm initial={agent} saving={saving} onSubmit={handleSubmit} />
       )}
-    </PageShell>
+    </Page>
   );
 }
 

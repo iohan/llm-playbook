@@ -1,0 +1,163 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Bot,
+  ChevronRight,
+  ChevronsUpDown,
+  PanelRight,
+  PanelRightOpen,
+  SquareTerminal,
+} from 'lucide-react';
+import { ReactNode, useState } from 'react';
+
+const UserProfile = () => {
+  return (
+    <div className="mt-auto p-2">
+      <button className="w-full rounded flex flex-row items-center gap-2 hover:bg-gray-200 px-2 py-1">
+        <div className="rounded-md bg-pink-200 w-7 h-7"></div>
+        <div className="flex flex-col text-left text-xs flex-1 min-w-0">
+          <div className="font-bold truncate">Johan Östling</div>
+          <div className="truncate">johan.ostling@playipp.com</div>
+        </div>
+        <div className="ml-auto flex flex-col items-center">
+          <ChevronsUpDown className="w-4 h-4" />
+        </div>
+      </button>
+    </div>
+  );
+};
+
+const Sidebar = ({ children }: { children: ReactNode }) => {
+  const SidebarTitle = ({ title }: { title: string }) => {
+    return <div className="text-lg font-medium px-2">{title}</div>;
+  };
+
+  return (
+    <div className="flex h-full flex-col gap-4">
+      <div className="flex flex-col gap-4 py-5 px-2">
+        <SidebarTitle title="LLM PLAYground" />
+        <div className="flex flex-col gap-10">{children}</div>
+      </div>
+      <UserProfile />
+    </div>
+  );
+};
+
+const Section = ({
+  title,
+  icon,
+  open,
+  items,
+}: {
+  title: string;
+  icon: ReactNode;
+  open?: boolean;
+  items: { title: string; url: string }[];
+}) => {
+  const [isOpen, setIsOpen] = useState(open ?? false);
+  return (
+    <ul>
+      <li>
+        <button
+          className="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded w-full"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {icon}
+          <div>{title}</div>
+          <motion.div
+            animate={{ rotate: isOpen ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="ml-auto"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </motion.div>
+        </button>
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="ml-4 border-l border-gray-300 pl-3 mt-1 text-sm overflow-hidden"
+            >
+              <ul>
+                {items.map((item) => (
+                  <motion.li
+                    key={item.title}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="hover:bg-gray-200 px-2 py-1 rounded"
+                  >
+                    <a href={item.url}>{item.title}</a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </li>
+    </ul>
+  );
+};
+
+const BaseLayout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <motion.div
+        animate={{ x: sidebarOpen ? 0 : -250, width: sidebarOpen ? 250 : 0 }}
+        transition={{ duration: 0.25 }}
+        className="w-3xs pt-5"
+      >
+        <Sidebar>
+          <div className="flex flex-col gap-2">
+            <div className="text-xs px-2">Platform</div>
+            <Section
+              title="Playground"
+              icon={<SquareTerminal className="w-5 h-5" />}
+              open={true}
+              items={[
+                { title: 'Run', url: '/' },
+                { title: 'History', url: '/history' },
+              ]}
+            />
+            <Section
+              title="Agents"
+              icon={<Bot className="w-5 h-5" />}
+              items={[
+                { title: 'Billy bot', url: '/billy' },
+                { title: 'Chat bot', url: '/chat' },
+              ]}
+            />
+          </div>
+        </Sidebar>
+      </motion.div>
+      <div className="w-full py-5 px-4">
+        <div className="bg-white rounded-2xl">
+          <div className="flex px-5 py-4 items-center gap-3 border-b border-gray-200">
+            <PanelRight
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="w-5 h-5 rotate-180 text-gray-500 cursor-pointer hover:text-gray-600"
+            />
+            <div className="border-l border-gray-300 w-1 h-4"></div>
+            <div className="flex flex-row items-center gap-2">
+              <a href="#" className="text-gray-600 hover:underline hover:text-gray-800">
+                Dashboard
+              </a>
+              <ChevronRight className="w-4 h-4" />
+              <div>Agents</div>
+            </div>
+            <div className="ml-auto">
+              <button className="border rounded-lg px-3 py-1">New</button>
+            </div>
+          </div>
+          <div className="p-5 min-h-[600px]">Main content goes here</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BaseLayout;

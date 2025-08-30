@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
-import { AgentFormPage, AgentsList } from './Agents';
+import { AgentFormPage } from './Agents';
+import AgentsList from './list/AgentsList';
 
 const AgentsRouter = () => (
   <Routes>

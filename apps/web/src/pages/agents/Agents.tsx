@@ -43,7 +43,7 @@ function Spinner({ className = '' }: { className?: string }) {
   );
 }
 
-export function AgentsList() {
+export function AgentsListOld() {
   const [agents, setAgents] = useState<Agent[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 

@@ -6,15 +6,18 @@ export type HealthStatus = {
 };
 
 export type Agent = {
-  id: string;
+  id: number;
   name: string;
   prompt: string;
   description: string;
-  //policy: string;
-  provider: 'openai' | 'anthropic';
-  //tools: string[];
-  //createdAt: string;
-  //updatedAt: string;
+  policy: string;
+  provider: string;
+  model: string;
+  versions: { version: number; live: boolean }[];
+  tools: string[];
+  files: string[];
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type ChatRole = 'user' | 'assistant' | 'system';

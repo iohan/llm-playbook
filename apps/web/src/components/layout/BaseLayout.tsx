@@ -143,23 +143,6 @@ const BaseLayout = () => {
       </motion.div>
       <div className="w-full py-5 px-4">
         <div className="bg-white rounded-2xl">
-          <div className="flex px-5 py-4 items-center gap-3 border-b border-gray-200">
-            <PanelRight
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="w-5 h-5 rotate-180 text-gray-500 cursor-pointer hover:text-gray-600"
-            />
-            <div className="border-l border-gray-300 w-1 h-4"></div>
-            <div className="flex flex-row items-center gap-2">
-              <Link to="/" className="text-gray-600 hover:underline hover:text-gray-800">
-                Dashboard
-              </Link>
-              <ChevronRight className="w-4 h-4" />
-              <div>Agents</div>
-            </div>
-            <div className="ml-auto">
-              <button className="border rounded-lg px-3 py-1">New</button>
-            </div>
-          </div>
           <div className="p-5 min-h-[600px]">
             <Outlet />
           </div>

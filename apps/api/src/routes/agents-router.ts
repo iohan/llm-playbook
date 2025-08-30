@@ -3,18 +3,68 @@ import { Router } from 'express';
 
 const agents: Agent[] = [
   {
-    id: '1',
-    name: 'Demo 2',
+    id: 1,
+    name: 'Billy bot',
     provider: 'anthropic',
+    model: 'claude-2',
     description: 'En demo agent som pratar svenska',
     prompt: 'Hej hej hej',
+    policy: '',
+    versions: [
+      { version: 3.45, live: false },
+      { version: 1.14, live: false },
+      { version: 1.15, live: true },
+    ],
+    tools: ['tool1', 'tool2'],
+    files: ['file1'],
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
-    id: '2',
-    name: 'Demo 1',
+    id: 2,
+    name: 'Agent Smith',
     provider: 'openai',
-    description: 'A demo agent that speaks English',
-    prompt: 'Hello hello hello',
+    model: 'gpt-4',
+    description: 'A sophisticated agent for complex tasks',
+    prompt: 'You are Agent Smith, a highly intelligent AI.',
+    policy: '',
+    versions: [{ version: 2.0, live: true }],
+    tools: ['toolA', 'toolB', 'toolC'],
+    files: ['fileX', 'fileY'],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 3,
+    name: 'Helper Bot',
+    provider: 'openai',
+    model: 'gpt-3.5-turbo',
+    description: 'A friendly helper bot for everyday tasks',
+    prompt: 'You are a helpful assistant.',
+    policy: '',
+    versions: [{ version: 1.5, live: false }],
+    tools: ['tool1'],
+    files: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 4,
+    name: 'Data Analyzer',
+    provider: 'anthropic',
+    model: 'claude-instant-100k',
+    description: 'An agent specialized in data analysis and insights',
+    prompt: 'Analyze the following data and provide insights.',
+    policy: '',
+    versions: [
+      { version: 2.1, live: false },
+      { version: 3.1, live: true },
+      { version: 4.0, live: false },
+    ],
+    tools: ['dataTool', 'chartTool'],
+    files: ['dataFile1'],
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
@@ -25,15 +75,22 @@ router.get('/', (_req, res) => {
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  res.json(agents.find((agent) => agent.id === id));
+  res.json(agents.find((agent) => agent.id === Number(id)));
 });
 
 router.post('/', (req, res) => {
   const { name, prompt, provider } = req.body;
   const newAgent: Agent = {
-    id: (agents.length + 1).toString(),
+    id: agents.length + 1,
     name,
     description: '',
+    policy: '',
+    model: 'gpt-3.5-turbo',
+    versions: [{ version: 1.0, live: true }],
+    tools: [],
+    files: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
     prompt,
     provider,
   };
@@ -43,10 +100,24 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { name, prompt, description, provider } = req.body;
-  const agentIndex = agents.findIndex((agent) => agent.id === id);
+  const { name, prompt, provider } = req.body;
+  const agentIndex = agents.findIndex((agent) => agent.id === Number(id));
   if (agentIndex !== -1) {
-    agents[agentIndex] = { id, name, description, prompt, provider };
+    const createdAt = agents[agentIndex]?.createdAt ?? new Date();
+    agents[agentIndex] = {
+      id: Number(id),
+      name,
+      description: '',
+      prompt,
+      provider,
+      model: 'gpt-3.5-turbo',
+      policy: '',
+      versions: [{ version: 1.0, live: true }],
+      tools: [],
+      files: [],
+      createdAt,
+      updatedAt: new Date(),
+    };
     res.json(agents[agentIndex]);
   } else {
     res.status(404).json({ message: 'Agent not found' });

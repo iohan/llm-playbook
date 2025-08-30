@@ -1,5 +1,5 @@
 {
-  "name": "playbook",
+  "name": "playground",
   "private": true,
   "engines": {
     "node": ">=20 <23"

@@ -1,4 +1,4 @@
-# LLM Agent Playbook (MVP)
+# LLM Agent PLAYground (MVP)
 
 A monorepo for building and testing LLM agents quickly. Frontend (React + Vite) and backend (Express) exists in the same repo but run separately during development and in production. Shared TypeScript types exists in their own package.
 

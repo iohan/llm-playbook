@@ -1,17 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Agent } from '@pkg/types';
-import AgentChatPage from './Chat';
-import Navbar from './components/reusables/navbar';
-import Page from './components/reusables/Page';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, {
@@ -54,10 +43,9 @@ function Spinner({ className = '' }: { className?: string }) {
   );
 }
 
-function AgentListPage() {
+export function AgentsList() {
   const [agents, setAgents] = useState<Agent[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     let active = true;
@@ -73,19 +61,7 @@ function AgentListPage() {
   }, []);
 
   return (
-    <Page
-      title="Agents"
-      actions={
-        <div className="flex items-center gap-2">
-          <Link
-            to="/agents/new"
-            className="inline-flex items-center rounded-xl bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800"
-          >
-            + New agent
-          </Link>
-        </div>
-      }
-    >
+    <>
       {error && (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           {error}
@@ -130,7 +106,7 @@ function AgentListPage() {
           ))}
         </ul>
       )}
-    </Page>
+    </>
   );
 }
 
@@ -152,7 +128,7 @@ function EmptyState() {
   );
 }
 
-function AgentFormPage() {
+export function AgentFormPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isNew = id === undefined; // route /agents/new has no :id param
@@ -196,16 +172,7 @@ function AgentFormPage() {
   }
 
   return (
-    <Page
-      title={isNew ? 'New agent' : agent?.name ? `Edit: ${agent.name}` : 'Loading…'}
-      actions={
-        <div className="flex items-center gap-2">
-          <Link to="/agents" className="rounded-xl border px-3 py-2 text-sm hover:bg-slate-50">
-            Back
-          </Link>
-        </div>
-      }
-    >
+    <>
       {error && (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           {error}
@@ -218,7 +185,7 @@ function AgentFormPage() {
       ) : (
         <AgentForm initial={agent} saving={saving} onSubmit={handleSubmit} />
       )}
-    </Page>
+    </>
   );
 }
 
@@ -316,30 +283,4 @@ function AgentForm({
       </div>
     </form>
   );
-}
-
-function AppRouter() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/agents" element={<AgentListPage />} />
-        <Route path="/agents/new" element={<AgentFormPage />} />
-        <Route path="/agents/:id" element={<AgentFormPage />} />
-        <Route path="/chat" element={<AgentChatPage />} />
-        <Route path="*" element={<RedirectToAgents />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-function RedirectToAgents() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate('/agents', { replace: true });
-  }, [navigate]);
-  return null;
-}
-
-export default function AgentsUIRoot() {
-  return <AppRouter />;
 }

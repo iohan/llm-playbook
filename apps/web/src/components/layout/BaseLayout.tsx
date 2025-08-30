@@ -1,13 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  Bot,
-  ChevronRight,
-  ChevronsUpDown,
-  PanelRight,
-  PanelRightOpen,
-  SquareTerminal,
-} from 'lucide-react';
+import { Bot, ChevronRight, ChevronsUpDown, PanelRight, SquareTerminal } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   return (
@@ -45,28 +39,38 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
 const Section = ({
   title,
   icon,
+  url,
   open,
   items,
 }: {
   title: string;
   icon: ReactNode;
+  url?: string;
   open?: boolean;
   items: { title: string; url: string }[];
 }) => {
   const [isOpen, setIsOpen] = useState(open ?? false);
+  const navigate = useNavigate();
   return (
     <ul>
       <li>
         <button
-          className="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded w-full"
-          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded w-full cursor-pointer"
+          onClick={() => {
+            setIsOpen(url ? true : !isOpen);
+            url && navigate(url);
+          }}
         >
-          {icon}
-          <div>{title}</div>
+          <div className="text-gray-600">{icon}</div>
+          <div className="text-gray-600">{title}</div>
           <motion.div
             animate={{ rotate: isOpen ? 90 : 0 }}
             transition={{ duration: 0.2 }}
             className="ml-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
           >
             <ChevronRight className="w-4 h-4" />
           </motion.div>
@@ -90,7 +94,9 @@ const Section = ({
                     transition={{ duration: 0.2 }}
                     className="hover:bg-gray-200 px-2 py-1 rounded"
                   >
-                    <a href={item.url}>{item.title}</a>
+                    <Link to={item.url} className="w-full block hover:text-gray-800">
+                      {item.title}
+                    </Link>
                   </motion.li>
                 ))}
               </ul>
@@ -119,12 +125,13 @@ const BaseLayout = () => {
               icon={<SquareTerminal className="w-5 h-5" />}
               open={true}
               items={[
-                { title: 'Run', url: '/' },
+                { title: 'Chat', url: '/' },
                 { title: 'History', url: '/history' },
               ]}
             />
             <Section
               title="Agents"
+              url="/agents"
               icon={<Bot className="w-5 h-5" />}
               items={[
                 { title: 'Billy bot', url: '/billy' },
@@ -143,9 +150,9 @@ const BaseLayout = () => {
             />
             <div className="border-l border-gray-300 w-1 h-4"></div>
             <div className="flex flex-row items-center gap-2">
-              <a href="#" className="text-gray-600 hover:underline hover:text-gray-800">
+              <Link to="/" className="text-gray-600 hover:underline hover:text-gray-800">
                 Dashboard
-              </a>
+              </Link>
               <ChevronRight className="w-4 h-4" />
               <div>Agents</div>
             </div>
@@ -153,7 +160,9 @@ const BaseLayout = () => {
               <button className="border rounded-lg px-3 py-1">New</button>
             </div>
           </div>
-          <div className="p-5 min-h-[600px]">Main content goes here</div>
+          <div className="p-5 min-h-[600px]">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import AgentsUIRoot from './Agents';
 import './index.css';
-import BaseLayout from './BaseLayout';
+import RootRouter from './RootRouter';
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/*<AgentsUIRoot />*/}
-    <BaseLayout />
+    <RootRouter />
   </React.StrictMode>,
 );

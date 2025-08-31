@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Agent } from '@pkg/types';
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
@@ -40,91 +40,6 @@ function Spinner({ className = '' }: { className?: string }) {
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
     </svg>
-  );
-}
-
-export function AgentsListOld() {
-  const [agents, setAgents] = useState<Agent[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    AgentsAPI.list()
-      .then((data) => {
-        if (!active) return;
-        setAgents(data);
-      })
-      .catch((e) => setError(e.message));
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <>
-      {error && (
-        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {error}
-        </div>
-      )}
-
-      {!agents ? (
-        <div className="flex items-center gap-2 text-slate-600">
-          <Spinner /> Loading…
-        </div>
-      ) : agents.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <ul className="grid grid-cols-1 gap-3">
-          {agents.map((a) => (
-            <li
-              key={a.id}
-              className="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-4 hover:shadow transition"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <Link to={`/agents/${a.id}`} className="text-lg font-medium hover:underline">
-                    {a.name}
-                  </Link>
-                  <div className="mt-1 text-sm text-slate-600 line-clamp-2">
-                    {a.prompt || <em className="text-slate-400">(missing prompt)</em>}
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <Badge>{a.provider}</Badge>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    to={`/agents/${a.id}`}
-                    className="rounded-xl border px-3 py-1.5 text-sm hover:bg-slate-50"
-                  >
-                    Edit
-                  </Link>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center bg-white">
-      <div className="mx-auto mb-3 h-10 w-10 flex items-center justify-center rounded-full bg-slate-100">
-        🤖
-      </div>
-      <h3 className="text-lg font-medium">No agents yet</h3>
-      <p className="mt-1 text-sm text-slate-600">Create your first agent to get started.</p>
-      <Link
-        to="/agents/new"
-        className="mt-4 inline-flex items-center rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-medium hover:bg-slate-800"
-      >
-        + New agent
-      </Link>
-    </div>
   );
 }
 

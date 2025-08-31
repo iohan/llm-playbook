@@ -6,7 +6,7 @@ import Button from './Button';
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   children: React.ReactNode;
   title: string;
 }
@@ -85,9 +85,9 @@ export function Modal({ open, onClose, onConfirm, children, title }: ModalProps)
         <div className="max-h-[70vh] overflow-auto pr-1">{children}</div>
         <div className="mt-4 flex justify-end gap-2">
           <Button onClick={onClose} variant="transparent">
-            Cancel
+            {onConfirm ? 'Cancel' : 'Close'}
           </Button>
-          <Button onClick={onConfirm}>Save changes</Button>
+          {onConfirm && <Button onClick={onConfirm}>Save changes</Button>}
         </div>
       </div>
     </div>,

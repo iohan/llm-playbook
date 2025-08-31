@@ -2,7 +2,7 @@ import Card from './Card';
 import { useEffect, useState } from 'react';
 import { Agent } from '@pkg/types';
 import ContentHeader from '../../../components/reusables/ContentHeader';
-import AddNewAgent from '../add-new-agent/AddNewAgent';
+import AddNewAgent from '../add/AddNewAgent';
 
 const AgentsList = () => {
   const [agents, setAgents] = useState<Agent[] | null>(null);

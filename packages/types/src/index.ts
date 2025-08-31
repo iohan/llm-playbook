@@ -33,3 +33,9 @@ export type ChatMessage = {
   content: string;
   createdAt: string;
 };
+
+export type ToolInfo = {
+  id: string;
+  name: string;
+  description: string;
+};

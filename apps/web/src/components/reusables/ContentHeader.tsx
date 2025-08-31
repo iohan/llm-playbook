@@ -1,5 +1,5 @@
 import { ChevronRight, PanelRight } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import useSettings from '../../stores/useSettings';
 
@@ -8,23 +8,14 @@ interface Breadcrumb {
   url?: string;
 }
 
-interface Action {
-  name: string;
-  icon?: React.ReactNode;
-  url: string;
-}
-
 const ContentHeader = ({
   breadcrumbs,
   actions,
 }: {
   breadcrumbs: Breadcrumb[];
-  actions: Action[];
+  actions: ReactNode;
 }) => {
-  const sidebarOpen = useSettings((s) => s.sidebarOpen);
   const toggleSidebar = useSettings((s) => s.toggleSidebar);
-  const hydrated = useSettings((s) => s.hydrated);
-
   return (
     <div className="flex pb-4 items-center gap-3 mb-10 border-b border-gray-200">
       <PanelRight
@@ -49,17 +40,7 @@ const ContentHeader = ({
           </span>
         ))}
       </div>
-      <div className="ml-auto">
-        {actions.map((action, index) => (
-          <Link
-            key={index}
-            to={action.url}
-            className="border rounded-lg px-3 py-1 hover:bg-gray-100 flex items-center gap-2"
-          >
-            {action.icon} {action.name}
-          </Link>
-        ))}
-      </div>
+      <div className="ml-auto">{actions}</div>
     </div>
   );
 };

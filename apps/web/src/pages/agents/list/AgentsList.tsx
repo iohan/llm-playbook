@@ -2,7 +2,7 @@ import Card from './Card';
 import { useEffect, useState } from 'react';
 import { Agent } from '@pkg/types';
 import ContentHeader from '../../../components/reusables/ContentHeader';
-import { Plus } from 'lucide-react';
+import AddNewAgent from '../add-new-agent/AddNewAgent';
 
 const AgentsList = () => {
   const [agents, setAgents] = useState<Agent[] | null>(null);
@@ -20,7 +20,7 @@ const AgentsList = () => {
     <>
       <ContentHeader
         breadcrumbs={[{ name: 'Dashboard', url: '/' }, { name: 'Agents' }]}
-        actions={[{ name: 'New Agent', icon: <Plus className="w-4 h-4" />, url: '/agents/new' }]}
+        actions={<AddNewAgent />}
       />
       <div className="grid gap-4 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-1">
         {agents?.map((agent) => <Card key={agent.id} agent={agent} />)}

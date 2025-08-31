@@ -1,13 +1,16 @@
+import { Bug, Cross, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import Button from './Button';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  title: string;
 }
 
-export function Modal({ open, onClose, children }: ModalProps) {
+export function Modal({ open, onClose, children, title }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
@@ -70,34 +73,20 @@ export function Modal({ open, onClose, children }: ModalProps) {
         ref={dialogRef}
         role="dialog"
         tabIndex={-1}
-        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-4 shadow-xl outline-none"
+        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl outline-none"
       >
         <div className="mb-3 flex items-start justify-between gap-4">
           <h2 id="modal-title" className="text-lg font-semibold">
-            Hej hej
+            {title}
           </h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg px-2 py-1 text-sm hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-black/20 dark:hover:bg-neutral-800"
-            aria-label="Stäng"
-          >
-            ✕
-          </button>
+          <Button variant="transparent-no-outline" icon={X} onClick={onClose} />
         </div>
         <div className="max-h-[70vh] overflow-auto pr-1">{children}</div>
         <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="rounded-xl border px-3 py-2 text-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-black/20 dark:border-neutral-700 dark:hover:bg-neutral-800"
-          >
-            Stäng
-          </button>
-          <button
-            onClick={onClose}
-            className="rounded-xl bg-black px-3 py-2 text-sm text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-black/30 dark:bg-white dark:text-black"
-          >
-            Ok
-          </button>
+          <Button onClick={onClose} variant="transparent">
+            Cancel
+          </Button>
+          <Button onClick={onClose}>Save changes</Button>
         </div>
       </div>
     </div>,

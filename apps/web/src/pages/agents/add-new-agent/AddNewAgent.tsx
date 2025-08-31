@@ -8,10 +8,10 @@ const AddNewAgent = () => {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} icon={<Plus />}>
+      <Button onClick={() => setOpen(true)} icon={Plus}>
         New Agent
       </Button>
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={() => setOpen(false)} title="Add new agent">
         <p className="mb-3">
           Detta är en enkel, tillgänglig modal för ditt MVP. Den stängs med ESC eller klick utanför.
         </p>

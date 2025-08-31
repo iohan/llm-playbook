@@ -1,6 +1,7 @@
 import { ChevronRight, PanelRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useSettings from '../../stores/useSettings';
 
 interface Breadcrumb {
   name: string;
@@ -20,11 +21,14 @@ const ContentHeader = ({
   breadcrumbs: Breadcrumb[];
   actions: Action[];
 }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarOpen = useSettings((s) => s.sidebarOpen);
+  const toggleSidebar = useSettings((s) => s.toggleSidebar);
+  const hydrated = useSettings((s) => s.hydrated);
+
   return (
     <div className="flex pb-4 items-center gap-3 mb-10 border-b border-gray-200">
       <PanelRight
-        onClick={() => setSidebarOpen(!sidebarOpen)}
+        onClick={() => toggleSidebar()}
         className="w-5 h-5 rotate-180 text-gray-500 cursor-pointer hover:text-gray-600"
       />
       <div className="border-l border-gray-300 w-1 h-4"></div>

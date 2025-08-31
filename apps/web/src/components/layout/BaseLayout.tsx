@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, ChevronRight, ChevronsUpDown, PanelRight, SquareTerminal } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
+import useSettings from '../../stores/useSettings';
 
 const UserProfile = () => {
   return (
@@ -37,28 +38,39 @@ const Sidebar = ({ children }: { children: ReactNode }) => {
 };
 
 const Section = ({
+  id,
   title,
   icon,
   url,
-  open,
   items,
 }: {
+  id: string;
   title: string;
   icon: ReactNode;
   url?: string;
-  open?: boolean;
   items: { title: string; url: string }[];
 }) => {
-  const [isOpen, setIsOpen] = useState(open ?? false);
-  const navigate = useNavigate();
+  const isMenuExpanded = useSettings((s) => s.isMenuExpanded);
+  const [isOpen, setIsOpen] = useState(isMenuExpanded(id));
+  const toggleMenu = useSettings((s) => s.toggleMenu);
+  const goTo = useNavigate();
+
+  const toggle = ({ navigate }: { navigate?: boolean }) => {
+    toggleMenu(id);
+    setIsOpen(!isOpen);
+
+    if (url && navigate) {
+      goTo(url);
+    }
+  };
+
   return (
     <ul>
       <li>
         <button
           className="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded w-full cursor-pointer"
           onClick={() => {
-            setIsOpen(url ? true : !isOpen);
-            url && navigate(url);
+            toggle({ navigate: true });
           }}
         >
           <div className="text-gray-600">{icon}</div>
@@ -69,7 +81,7 @@ const Section = ({
             className="ml-auto"
             onClick={(e) => {
               e.stopPropagation();
-              setIsOpen(!isOpen);
+              toggle({ navigate: false });
             }}
           >
             <ChevronRight className="w-4 h-4" />
@@ -109,10 +121,12 @@ const Section = ({
 };
 
 const BaseLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const sidebarOpen = useSettings((s) => s.sidebarOpen);
+
   return (
     <div className="flex h-screen bg-gray-100">
       <motion.div
+        initial={{ x: sidebarOpen ? 0 : -250, width: sidebarOpen ? 250 : 0 }}
         animate={{ x: sidebarOpen ? 0 : -250, width: sidebarOpen ? 250 : 0 }}
         transition={{ duration: 0.25 }}
         className="w-3xs pt-5"
@@ -121,6 +135,7 @@ const BaseLayout = () => {
           <div className="flex flex-col gap-2">
             <div className="text-xs px-2">Platform</div>
             <Section
+              id="playground"
               title="Playground"
               icon={<SquareTerminal className="w-5 h-5" />}
               open={true}
@@ -130,6 +145,7 @@ const BaseLayout = () => {
               ]}
             />
             <Section
+              id="agents"
               title="Agents"
               url="/agents"
               icon={<Bot className="w-5 h-5" />}

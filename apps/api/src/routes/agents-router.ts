@@ -82,19 +82,19 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { name, prompt, provider } = req.body;
+  const { name, provider, model, description } = req.body;
   const newAgent: Agent = {
     id: agents.length + 1,
     name,
-    description: '',
+    description,
     policy: '',
-    model: 'gpt-3.5-turbo',
-    versions: [{ version: 1.0, live: true }],
+    model,
+    versions: [{ version: 0.1, live: false }],
     tools: [],
     files: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    prompt,
+    prompt: '',
     provider,
   };
   agents.push(newAgent);

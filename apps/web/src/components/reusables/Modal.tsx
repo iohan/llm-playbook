@@ -1,4 +1,4 @@
-import { Bug, Cross, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Button from './Button';
@@ -6,11 +6,12 @@ import Button from './Button';
 interface ModalProps {
   open: boolean;
   onClose: () => void;
+  onConfirm: () => void;
   children: React.ReactNode;
   title: string;
 }
 
-export function Modal({ open, onClose, children, title }: ModalProps) {
+export function Modal({ open, onClose, onConfirm, children, title }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
 
@@ -86,7 +87,7 @@ export function Modal({ open, onClose, children, title }: ModalProps) {
           <Button onClick={onClose} variant="transparent">
             Cancel
           </Button>
-          <Button onClick={onClose}>Save changes</Button>
+          <Button onClick={onConfirm}>Save changes</Button>
         </div>
       </div>
     </div>,

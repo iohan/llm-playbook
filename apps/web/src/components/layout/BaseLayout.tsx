@@ -170,9 +170,9 @@ const BaseLayout = () => {
           </div>
         </Sidebar>
       </motion.div>
-      <div className="w-full py-5 px-4">
+      <div className="w-full h-full py-5 px-4 overflow-auto flex-1 flex-col">
         <div className="bg-white rounded-2xl">
-          <div className="p-5 min-h-[600px]">
+          <div className="p-5">
             <Outlet />
           </div>
         </div>

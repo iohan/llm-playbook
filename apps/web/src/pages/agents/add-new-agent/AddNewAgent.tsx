@@ -23,6 +23,20 @@ const AddNewAgent = () => {
       .then((data) => setProviders(data));
   }, []);
 
+  const saveAgent = async () => {
+    const res = await fetch('/api/agents/', {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      method: 'POST',
+      body: JSON.stringify(inputData),
+    });
+
+    if (res.ok) {
+      setOpen(false);
+    }
+    console.log(res.json());
+  };
+
   useEffect(() => {
     console.log(providers?.map((p) => p.id));
   }, [providers]);
@@ -32,7 +46,7 @@ const AddNewAgent = () => {
       <Button onClick={() => setOpen(true)} icon={Plus}>
         New Agent
       </Button>
-      <Modal open={open} onClose={() => setOpen(false)} title="Add new agent">
+      <Modal open={open} onClose={() => setOpen(false)} onConfirm={saveAgent} title="Add new agent">
         <p className="mb-3">
           Create a new agent by giving it a name, selecting a provider and model, and a short
           description. You can always change these settings later.
@@ -42,6 +56,8 @@ const AddNewAgent = () => {
             <label className="mb-2 block text-sm">Name</label>
             <input
               type="text"
+              onChange={(e) => setInputData({ ...inputData, name: e.target.value })}
+              value={inputData.name}
               className="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-black/20 dark:border-neutral-700"
             />
           </div>
@@ -52,6 +68,9 @@ const AddNewAgent = () => {
               value={inputData.provider}
               onChange={(e) => setInputData({ ...inputData, provider: e.target.value, model: '' })}
             >
+              <option value="" disabled>
+                Select provider
+              </option>
               {providers?.map((provider) => (
                 <option key={provider.id} value={provider.id}>
                   {provider.title}
@@ -66,6 +85,9 @@ const AddNewAgent = () => {
               value={inputData.model}
               onChange={(e) => setInputData({ ...inputData, model: e.target.value })}
             >
+              <option value="" disabled>
+                {inputData.provider ? 'Select model' : 'Select provider first'}
+              </option>
               {providers
                 ?.find((p) => p.id === inputData.provider)
                 ?.models.map((model) => (

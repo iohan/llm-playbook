@@ -20,6 +20,12 @@ export type Agent = {
   updatedAt: Date;
 };
 
+export type Provider = {
+  title: string;
+  id: string;
+  models: string[];
+};
+
 export type ChatRole = 'user' | 'assistant' | 'system';
 export type ChatMessage = {
   id: string;

@@ -72,6 +72,9 @@ const router = Router();
 router.get('/', (_req, res) => {
   res.json(agents);
 });
+router.get('/name', (_req, res) => {
+  res.json(agents.map((agent) => ({ id: agent.id, name: agent.name })));
+});
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;

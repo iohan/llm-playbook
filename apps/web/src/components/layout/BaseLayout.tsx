@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, ChevronRight, ChevronsUpDown, PanelRight, SquareTerminal } from 'lucide-react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import useSettings from '../../stores/useSettings';
+import { Agent } from '@pkg/types';
 
 const UserProfile = () => {
   return (
@@ -56,8 +57,10 @@ const Section = ({
   const goTo = useNavigate();
 
   const toggle = ({ navigate }: { navigate?: boolean }) => {
-    toggleMenu(id);
-    setIsOpen(!isOpen);
+    if (!navigate || (navigate && !isOpen)) {
+      toggleMenu(id);
+      setIsOpen(!isOpen);
+    }
 
     if (url && navigate) {
       goTo(url);
@@ -70,7 +73,7 @@ const Section = ({
         <button
           className="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded w-full cursor-pointer"
           onClick={() => {
-            toggle({ navigate: true });
+            toggle({ navigate: Boolean(url) });
           }}
         >
           <div className="text-gray-600">{icon}</div>
@@ -122,6 +125,16 @@ const Section = ({
 
 const BaseLayout = () => {
   const sidebarOpen = useSettings((s) => s.sidebarOpen);
+  const [agents, setAgents] = useState<Pick<Agent, 'name' | 'id'>[] | null>(null);
+
+  useEffect(() => {
+    fetch('/api/agents/name', {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setAgents(data));
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -138,7 +151,6 @@ const BaseLayout = () => {
               id="playground"
               title="Playground"
               icon={<SquareTerminal className="w-5 h-5" />}
-              open={true}
               items={[
                 { title: 'Chat', url: '/' },
                 { title: 'History', url: '/history' },
@@ -149,10 +161,11 @@ const BaseLayout = () => {
               title="Agents"
               url="/agents"
               icon={<Bot className="w-5 h-5" />}
-              items={[
-                { title: 'Billy bot', url: '/billy' },
-                { title: 'Chat bot', url: '/chat' },
-              ]}
+              items={
+                agents
+                  ? agents.map((agent) => ({ title: agent.name, url: `/agents/${agent.id}` }))
+                  : []
+              }
             />
           </div>
         </Sidebar>

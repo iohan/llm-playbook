@@ -19,6 +19,11 @@ export type Agent = {
   updatedAt: Date;
 };
 
+export type Message = {
+  role: 'user' | 'assistant';
+  content: string;
+};
+
 export type Provider = {
   title: string;
   id: string;

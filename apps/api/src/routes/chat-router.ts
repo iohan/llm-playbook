@@ -1,8 +1,9 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 
 const router = Router();
-router.post('/', (_req, res) => {
-  const answer = { reply: { role: 'assistant', content: 'Hello!' } };
+router.post('/', (req: Request, res: Response) => {
+  const userMessage = req.body.message;
+  const answer = { reply: `Hello! - ${userMessage}` };
   res.json(answer);
 });
 

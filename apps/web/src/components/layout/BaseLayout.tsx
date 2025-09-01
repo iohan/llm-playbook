@@ -152,7 +152,7 @@ const BaseLayout = () => {
               title="Playground"
               icon={<SquareTerminal className="w-5 h-5" />}
               items={[
-                { title: 'Chat', url: '/' },
+                { title: 'Chat', url: '/chat' },
                 { title: 'History', url: '/history' },
               ]}
             />

@@ -40,7 +40,7 @@ const ContentHeader = ({
           </span>
         ))}
       </div>
-      <div className="ml-auto">{actions}</div>
+      <div className="ml-auto flex flex-row gap-2">{actions}</div>
     </div>
   );
 };

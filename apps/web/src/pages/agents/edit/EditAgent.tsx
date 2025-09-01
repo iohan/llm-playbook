@@ -1,11 +1,53 @@
 import ContentHeader from '../../../components/reusables/ContentHeader';
 import Button from '../../../components/reusables/Button';
 import Modal from '../../../components/reusables/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ToolsModal from './ToolsModal';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Agent } from '@pkg/types';
+import { isEqual, transform, isObject } from 'lodash';
 
 const EditAgent = () => {
   const [toolsModalOpen, setToolsModalOpen] = useState(false);
+  const [originalAgent, setOriginalAgent] = useState<Agent | null>(null);
+  const [agent, setAgent] = useState<Agent | null>(null);
+  const [changesMade, setChangesMade] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`/api/agents/${id}`, {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setOriginalAgent(data));
+  }, []);
+
+  useEffect(() => {
+    if (!originalAgent) return;
+
+    setAgent(JSON.parse(JSON.stringify(originalAgent)));
+  }, [originalAgent]);
+
+  useEffect(() => {
+    if (changesMade) return;
+    if (!originalAgent || !agent) return;
+    setChangesMade(!isEqual(originalAgent, agent));
+  }, [originalAgent, agent]);
+
+  const updateAgent = async () => {
+    if (!agent) return;
+    await fetch(`/api/agents/${agent.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(agent),
+    })
+      .then((res) => res.json())
+      .then(() => navigate('/agents'));
+  };
+
   return (
     <>
       <ContentHeader
@@ -14,13 +56,26 @@ const EditAgent = () => {
           { name: 'Agents', url: '/agents' },
           { name: 'Edit Agent' },
         ]}
+        actions={
+          <>
+            <Button variant="transparent" to="/agents">
+              Cancel
+            </Button>
+            <Button disabled={!changesMade} onClick={() => updateAgent()}>
+              Save
+            </Button>
+          </>
+        }
       />
       <div className="flex">
         <div className="w-3/4">
           <div className="flex flex-col gap-3 pr-5">
             <div>
               <label className="mb-2 block text-sm">Prompt</label>
-              <textarea className="min-h-[260px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+              <textarea
+                className="min-h-[260px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+                value={agent?.prompt}
+              />
             </div>
             <div>
               <div className="mb-2 text-sm flex items-center gap-4">
@@ -53,6 +108,10 @@ const EditAgent = () => {
               <input
                 type="text"
                 className="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-black/20 dark:border-neutral-700"
+                value={agent?.name}
+                onChange={(e) =>
+                  setAgent((prev) => (prev ? { ...prev, name: e.target.value } : prev))
+                }
               />
             </div>
             <div>
@@ -61,6 +120,11 @@ const EditAgent = () => {
                 <option value="" disabled>
                   Select provider
                 </option>
+                {agent?.provider && (
+                  <option value={agent.provider} selected>
+                    {agent.provider}
+                  </option>
+                )}
               </select>
             </div>
             <div>
@@ -69,6 +133,11 @@ const EditAgent = () => {
                 <option value="" disabled>
                   Select model
                 </option>
+                {agent?.model && (
+                  <option value={agent.model} selected>
+                    {agent.model}
+                  </option>
+                )}
               </select>
             </div>
             <div>
@@ -76,6 +145,10 @@ const EditAgent = () => {
               <textarea
                 className="min-h-[160px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 placeholder={'Description of the agent…'}
+                value={agent?.description}
+                onChange={(e) =>
+                  setAgent((prev) => (prev ? { ...prev, description: e.target.value } : prev))
+                }
               />
             </div>
             <div>

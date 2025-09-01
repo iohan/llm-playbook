@@ -4,14 +4,15 @@ import Modal from '../../../components/reusables/Modal';
 import { useEffect, useState } from 'react';
 import ToolsModal from './ToolsModal';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Agent } from '@pkg/types';
-import { isEqual, transform, isObject } from 'lodash';
+import { Agent, Provider } from '@pkg/types';
+import { isEqual } from 'lodash';
 
 const EditAgent = () => {
   const [toolsModalOpen, setToolsModalOpen] = useState(false);
   const [originalAgent, setOriginalAgent] = useState<Agent | null>(null);
   const [agent, setAgent] = useState<Agent | null>(null);
   const [changesMade, setChangesMade] = useState(false);
+  const [providers, setProviders] = useState<Provider[]>([]);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -22,7 +23,14 @@ const EditAgent = () => {
     })
       .then((res) => res.json())
       .then((data) => setOriginalAgent(data));
-  }, []);
+
+    fetch(`/api/providers`, {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setProviders(data));
+  }, [id]);
 
   useEffect(() => {
     if (!originalAgent) return;
@@ -92,14 +100,25 @@ const EditAgent = () => {
                     onClose={() => setToolsModalOpen(false)}
                     title="Tools"
                   >
-                    <ToolsModal />
+                    <ToolsModal
+                      selectedTools={agent?.tools || []}
+                      setSelectedTools={(a: Agent['tools']) =>
+                        setAgent((prev) => (prev ? { ...prev, tools: a } : prev))
+                      }
+                    />
                   </Modal>
                 )}
               </div>
               <div className="flex">
-                <div className="text-sm bg-gray-100 border border-gray-400 py-1 px-3 rounded-full hover:bg-gray-200">
-                  All Manager Companies
-                </div>
+                {agent?.tools.map((tool) => (
+                  <div
+                    key={tool.name}
+                    className="text-sm bg-gray-100 border border-gray-400 py-1 px-3 rounded-full hover:bg-gray-200 mr-2"
+                    onClick={() => setToolsModalOpen(true)}
+                  >
+                    {tool.name}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -119,28 +138,48 @@ const EditAgent = () => {
             </div>
             <div>
               <label className="mb-2 block text-sm">LLM Provider</label>
-              <select className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+              <select
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+                value={agent?.provider}
+                onChange={(e) =>
+                  setAgent((prev) =>
+                    prev ? { ...prev, provider: e.target.value, model: '' } : prev,
+                  )
+                }
+              >
                 <option value="" disabled>
                   Select provider
                 </option>
-                {agent?.provider && (
-                  <option value={agent.provider} selected>
-                    {agent.provider}
+                {providers.map((provider) => (
+                  <option
+                    key={provider.id}
+                    value={provider.id}
+                    selected={agent?.provider === provider.title}
+                  >
+                    {provider.title}
                   </option>
-                )}
+                ))}
               </select>
             </div>
             <div>
               <label className="mb-2 block text-sm">Model</label>
-              <select className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+              <select
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+                value={agent?.model}
+                onChange={(e) =>
+                  setAgent((prev) => (prev ? { ...prev, model: e.target.value } : prev))
+                }
+              >
                 <option value="" disabled>
                   Select model
                 </option>
-                {agent?.model && (
-                  <option value={agent.model} selected>
-                    {agent.model}
-                  </option>
-                )}
+                {providers
+                  .find((p) => p.id === agent?.provider)
+                  ?.models.map((model) => (
+                    <option key={model} value={model} selected={agent?.model === model}>
+                      {model}
+                    </option>
+                  ))}
               </select>
             </div>
             <div>

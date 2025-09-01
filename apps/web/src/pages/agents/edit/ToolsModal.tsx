@@ -1,64 +1,26 @@
-import { ToolInfo } from '@pkg/types';
+import { Agent, ToolInfo } from '@pkg/types';
 import Button from '../../../components/reusables/Button';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const availableTools: ToolInfo[] = [
-  {
-    name: 'All Manager Companies',
-    description: 'Description for Tool 1',
-    id: 'getManagerCompanies',
-  },
-  {
-    name: 'Tool 2',
-    description: 'Description for Tool 2',
-    id: 'tool2',
-  },
-  {
-    name: 'Tool 3',
-    description: 'Description for Tool 3',
-    id: 'tool3',
-  },
-  {
-    name: 'Tool 4',
-    description: 'Description for Tool 4',
-    id: 'tool4',
-  },
-  {
-    name: 'Tool 5',
-    description: 'Description for Tool 5',
-    id: 'tool5',
-  },
-  {
-    name: 'Tool 6',
-    description: 'Description for Tool 6',
-    id: 'tool6',
-  },
-  {
-    name: 'Tool 7',
-    description: 'Description for Tool 7',
-    id: 'tool7',
-  },
-  {
-    name: 'Tool 8',
-    description: 'Description for Tool 8',
-    id: 'tool8',
-  },
-  {
-    name: 'Tool 9',
-    description: 'Description for Tool 9',
-    id: 'tool9',
-  },
-  {
-    name: 'Tool 10',
-    description: 'Description for Tool 10',
-    id: 'tool10',
-  },
-];
-
-const ToolsModal = () => {
+const ToolsModal = ({
+  selectedTools,
+  setSelectedTools,
+}: {
+  selectedTools: Agent['tools'];
+  setSelectedTools: (tools: Agent['tools']) => void;
+}) => {
   const [toolPreview, setToolPreview] = useState<ToolInfo | null>(null);
-  const [selectedTools, setSelectedTools] = useState<string[]>(['getManagerCompanies', 'tool2']);
+  const [availableTools, setAvailableTools] = useState<ToolInfo[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/tools`, {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setAvailableTools(data));
+  }, []);
 
   const Pill = ({ name, onRemove }: { name: string; onRemove: () => void }) => (
     <div className="text-sm bg-gray-100 border border-gray-400 py-1 px-3 rounded-full hover:bg-gray-200 flex items-center gap-2">
@@ -71,10 +33,10 @@ const ToolsModal = () => {
 
   const toggleTool = (tool: ToolInfo | null) => {
     if (!tool) return;
-    if (selectedTools.some((st) => st === tool.id)) {
-      setSelectedTools((prev) => prev.filter((id) => id !== tool.id));
+    if (selectedTools.some((st) => st.id === tool.id)) {
+      setSelectedTools(selectedTools.filter((t) => t.id !== tool.id));
     } else {
-      setSelectedTools((prev) => [...prev, tool.id]);
+      setSelectedTools([...selectedTools, tool]);
     }
   };
 
@@ -84,18 +46,10 @@ const ToolsModal = () => {
         Tools are used by the agent to retrieve information and interact with external systems.
       </div>
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4 mb-4">
-        {selectedTools?.map((toolId) => {
-          const tool = availableTools.find((t) => t.id === toolId);
-          if (!tool) return null;
-          return (
-            <Pill
-              key={tool.id}
-              name={tool.name}
-              onRemove={() =>
-                setSelectedTools((prev) => prev.filter((selectedId) => selectedId !== tool.id))
-              }
-            />
-          );
+        {selectedTools?.map((tool) => {
+          const t = availableTools.find((t) => t.id === tool.id);
+          if (!t) return null;
+          return <Pill key={t.id} name={t.name} onRemove={() => toggleTool(t)} />;
         })}
         {selectedTools.length === 0 && (
           <div className="text-sm text-gray-500">No tools selected</div>
@@ -119,7 +73,7 @@ const ToolsModal = () => {
           ))}
         </select>
         <Button onClick={() => toggleTool(toolPreview)} disabled={!toolPreview}>
-          {selectedTools.some((st) => st === toolPreview?.id) ? 'Remove' : 'Add'}
+          {selectedTools.some((t) => t.id === toolPreview?.id) ? 'Remove' : 'Add'}
         </Button>
       </div>
       <div className="mt-4 text-sm text-gray-500">

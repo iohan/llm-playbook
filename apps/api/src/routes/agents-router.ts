@@ -14,7 +14,10 @@ const agents: Agent[] = [
       { version: 1.14, live: false },
       { version: 1.15, live: true },
     ],
-    tools: ['tool1', 'tool2'],
+    tools: [
+      { id: 'fileTool', name: 'File tool' },
+      { id: 'dataTool', name: 'Data Tool' },
+    ],
     files: ['file1'],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -27,7 +30,7 @@ const agents: Agent[] = [
     description: 'A sophisticated agent for complex tasks',
     prompt: 'You are Agent Smith, a highly intelligent AI.',
     versions: [{ version: 2.0, live: true }],
-    tools: ['toolA', 'toolB', 'toolC'],
+    tools: [],
     files: ['fileX', 'fileY'],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -40,7 +43,7 @@ const agents: Agent[] = [
     description: 'A friendly helper bot for everyday tasks',
     prompt: 'You are a helpful assistant.',
     versions: [{ version: 1.5, live: false }],
-    tools: ['tool1'],
+    tools: [],
     files: [],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -57,7 +60,7 @@ const agents: Agent[] = [
       { version: 3.1, live: true },
       { version: 4.0, live: false },
     ],
-    tools: ['dataTool', 'chartTool'],
+    tools: [],
     files: ['dataFile1'],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -98,7 +101,7 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { name, prompt, description, provider, model } = req.body;
+  const { name, tools, prompt, description, provider, model } = req.body;
   const agentIndex = agents.findIndex((agent) => agent.id === Number(id));
   if (agentIndex !== -1) {
     const createdAt = agents[agentIndex]?.createdAt ?? new Date();
@@ -110,7 +113,7 @@ router.put('/:id', (req, res) => {
       provider,
       model,
       versions: [{ version: 1.0, live: true }],
-      tools: [],
+      tools,
       files: [],
       createdAt,
       updatedAt: new Date(),

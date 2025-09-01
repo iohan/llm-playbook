@@ -6,6 +6,7 @@ import { healthHandler } from './routes/health.js';
 import agentsRouter from './routes/agents-router.js';
 import chatRouter from './routes/chat-router.js';
 import providersRouter from './routes/providers-router.js';
+import toolsRouter from './routes/tools-router.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get('/health', healthHandler);
 app.use('/api/agents', agentsRouter);
 app.use('/api/providers', providersRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/tools', toolsRouter);
 
 const port = Number(process.env.PORT ?? 4000);
 app.listen(port, () => {

@@ -13,7 +13,7 @@ export type Agent = {
   provider: string;
   model: string;
   versions: { version: number; live: boolean }[];
-  tools: string[];
+  tools: Pick<ToolInfo, 'id' | 'name'>[];
   files: string[];
   createdAt: Date;
   updatedAt: Date;

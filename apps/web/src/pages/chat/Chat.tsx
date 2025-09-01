@@ -26,7 +26,7 @@ const Chat = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ message: text }),
+      body: JSON.stringify({ history: messages, agentId: 1, userMessage: text }),
     })
       .then((res) => res.json())
       .then((data) => {

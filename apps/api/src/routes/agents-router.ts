@@ -9,7 +9,6 @@ const agents: Agent[] = [
     model: 'claude-2',
     description: 'En demo agent som pratar svenska',
     prompt: 'Hej hej hej',
-    policy: '',
     versions: [
       { version: 3.45, live: false },
       { version: 1.14, live: false },
@@ -27,7 +26,6 @@ const agents: Agent[] = [
     model: 'gpt-4',
     description: 'A sophisticated agent for complex tasks',
     prompt: 'You are Agent Smith, a highly intelligent AI.',
-    policy: '',
     versions: [{ version: 2.0, live: true }],
     tools: ['toolA', 'toolB', 'toolC'],
     files: ['fileX', 'fileY'],
@@ -41,7 +39,6 @@ const agents: Agent[] = [
     model: 'gpt-3.5-turbo',
     description: 'A friendly helper bot for everyday tasks',
     prompt: 'You are a helpful assistant.',
-    policy: '',
     versions: [{ version: 1.5, live: false }],
     tools: ['tool1'],
     files: [],
@@ -55,7 +52,6 @@ const agents: Agent[] = [
     model: 'claude-instant-100k',
     description: 'An agent specialized in data analysis and insights',
     prompt: 'Analyze the following data and provide insights.',
-    policy: '',
     versions: [
       { version: 2.1, live: false },
       { version: 3.1, live: true },
@@ -87,7 +83,6 @@ router.post('/', (req, res) => {
     id: agents.length + 1,
     name,
     description,
-    policy: '',
     model,
     versions: [{ version: 0.1, live: false }],
     tools: [],
@@ -103,18 +98,17 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { name, prompt, provider } = req.body;
+  const { name, prompt, description, provider, model } = req.body;
   const agentIndex = agents.findIndex((agent) => agent.id === Number(id));
   if (agentIndex !== -1) {
     const createdAt = agents[agentIndex]?.createdAt ?? new Date();
     agents[agentIndex] = {
       id: Number(id),
       name,
-      description: '',
+      description,
       prompt,
       provider,
-      model: 'gpt-3.5-turbo',
-      policy: '',
+      model,
       versions: [{ version: 1.0, live: true }],
       tools: [],
       files: [],

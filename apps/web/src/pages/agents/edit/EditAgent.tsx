@@ -75,6 +75,9 @@ const EditAgent = () => {
               <textarea
                 className="min-h-[260px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 value={agent?.prompt}
+                onChange={(e) =>
+                  setAgent((prev) => (prev ? { ...prev, prompt: e.target.value } : prev))
+                }
               />
             </div>
             <div>

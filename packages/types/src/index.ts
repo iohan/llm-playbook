@@ -10,7 +10,6 @@ export type Agent = {
   name: string;
   prompt: string;
   description: string;
-  policy: string;
   provider: string;
   model: string;
   versions: { version: number; live: boolean }[];

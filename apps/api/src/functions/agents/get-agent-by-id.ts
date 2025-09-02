@@ -5,10 +5,10 @@ const getAgentById = async (agentId: number): Promise<Agent> => {
   return {
     id: agentId,
     name: 'Sample Agent',
-    prompt: 'This is a sample prompt.',
+    prompt: 'Du är en hjälpsam assistent som alltid svarar på svenska.',
     description: 'A sample agent for demonstration purposes.',
     provider: 'anthropic',
-    model: 'claude-2',
+    model: 'claude-3-5-haiku-20241022',
     versions: [{ version: 1, live: true }],
     tools: [
       { id: 'dataTool', name: 'Tool A' },

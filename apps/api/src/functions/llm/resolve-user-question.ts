@@ -5,19 +5,19 @@ import callLLM from './call-llm';
 const resolveUserMessage = async ({
   agentId,
   messages,
-  userMessage,
 }: {
   agentId: number;
   messages: Message[];
-  userMessage: string;
 }) => {
   const agent = await getAgentById(agentId);
+  const { content, stop_reason, usage } = await callLLM({ agent, messages });
+  // Usage can be logged or processed further if needed
 
-  const llmReponse = await callLLM({ agent, messages });
+  if (stop_reason === 'end_turn' && content[0]?.type === 'text') {
+    return content[0]?.text;
+  }
 
-  console.log('Fetched agent:', llmReponse);
-
-  return 'Svar 2';
+  return null;
 };
 
 export default resolveUserMessage;

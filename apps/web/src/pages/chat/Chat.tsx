@@ -10,9 +10,11 @@ const Chat = () => {
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const AgentText = ({ text }: { text: string }) => <div className="max-w-5/6">{text}</div>;
+  const AgentText = ({ text }: { text: string }) => (
+    <div className="max-w-5/6 whitespace-pre-wrap">{text}</div>
+  );
   const UserText = ({ text }: { text: string }) => (
-    <div className="ml-auto max-w-5/6 bg-gray-200 border border-gray-300 py-2 px-3 rounded-2xl">
+    <div className="ml-auto max-w-5/6 bg-gray-200 border border-gray-300 py-2 px-3 rounded-2xl whitespace-pre-wrap">
       {text}
     </div>
   );
@@ -26,7 +28,10 @@ const Chat = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ history: messages, agentId: 1, userMessage: text }),
+      body: JSON.stringify({
+        history: [...messages, { role: 'user', content: text }],
+        agentId: 1,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {

@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@anthropic-ai/sdk": "^0.59.0",
+    "dotenv": "^17.2.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

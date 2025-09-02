@@ -5,13 +5,10 @@ const router = Router();
 router.post('/', async (req: Request, res: Response) => {
   const history = req.body.history;
   const agentId = req.body.agentId;
-  const userMessage = req.body.userMessage;
 
-  const llmResponse = await resolveUserMessage({ agentId, messages: history, userMessage });
+  const llmResponse = await resolveUserMessage({ agentId, messages: history });
 
-  console.log('Agent response:', llmResponse);
-
-  const answer = { reply: `Hello! - ${userMessage}` };
+  const answer = { reply: llmResponse };
   res.json(answer);
 });
 

@@ -10,6 +10,7 @@ const resolveUserMessage = async ({
   messages: Message[];
 }) => {
   const agent = await getAgentById(agentId);
+  if (!agent) throw new Error('Agent not found');
   const { content, stop_reason, usage } = await callLLM({ agent, messages });
   // Usage can be logged or processed further if needed
 

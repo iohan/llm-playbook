@@ -105,7 +105,7 @@ router.post('/', async (req, res) => {
     },
   );
 
-  res.status(201).json();
+  res.status(201).json({});
 });
 
 router.put('/:id', (req, res) => {

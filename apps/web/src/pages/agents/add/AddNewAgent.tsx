@@ -7,10 +7,15 @@ import { Provider } from '@pkg/types';
 const AddNewAgent = () => {
   const [open, setOpen] = useState(false);
   const [providers, setProviders] = useState<Provider[] | null>(null);
-  const [inputData, setInputData] = useState({
+  const [inputData, setInputData] = useState<{
+    name: string;
+    provider?: number;
+    model?: number;
+    description: string;
+  }>({
     name: '',
-    provider: '',
-    model: '',
+    provider: undefined,
+    model: undefined,
     description: '',
   });
 
@@ -37,10 +42,6 @@ const AddNewAgent = () => {
     console.log(res.json());
   };
 
-  useEffect(() => {
-    console.log(providers?.map((p) => p.id));
-  }, [providers]);
-
   return (
     <>
       <Button onClick={() => setOpen(true)} icon={Plus}>
@@ -65,8 +66,11 @@ const AddNewAgent = () => {
             <label className="mb-2 block text-sm">LLM Provider</label>
             <select
               className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+              defaultValue=""
               value={inputData.provider}
-              onChange={(e) => setInputData({ ...inputData, provider: e.target.value, model: '' })}
+              onChange={(e) =>
+                setInputData({ ...inputData, provider: Number(e.target.value), model: undefined })
+              }
             >
               <option value="" disabled>
                 Select provider
@@ -82,8 +86,9 @@ const AddNewAgent = () => {
             <label className="mb-2 block text-sm">Model</label>
             <select
               className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+              defaultValue=""
               value={inputData.model}
-              onChange={(e) => setInputData({ ...inputData, model: e.target.value })}
+              onChange={(e) => setInputData({ ...inputData, model: Number(e.target.value) })}
             >
               <option value="" disabled>
                 {inputData.provider ? 'Select model' : 'Select provider first'}
@@ -91,8 +96,8 @@ const AddNewAgent = () => {
               {providers
                 ?.find((p) => p.id === inputData.provider)
                 ?.models.map((model) => (
-                  <option key={model} value={model}>
-                    {model}
+                  <option key={model.id} value={model.id}>
+                    {model.title}
                   </option>
                 ))}
             </select>

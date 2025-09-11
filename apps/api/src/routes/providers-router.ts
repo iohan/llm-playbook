@@ -1,18 +1,23 @@
 import { Router } from 'express';
+import { sql } from '../db';
 
 const router = Router();
 
-const providers = [
-  { title: 'OpenAI', id: 'openai', models: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'] },
-  {
-    title: 'Anthropic',
-    id: 'anthropic',
-    models: ['claude-3-5-haiku-20241022', 'claude-3-7-sonnet-20250219', 'claude-sonnet-4-20250514'],
-  },
-];
+router.get('/', async (_req, res) => {
+  const providers = await sql('SELECT id, provider_name from llm_providers WHERE hidden = 0');
+  const models = await sql('SELECT id, model_name, provider_id from llm_models WHERE hidden = 0');
 
-router.get('/', (_req, res) => {
-  res.json(providers);
+  const data = providers.map((provider) => ({
+    title: provider.provider_name,
+    id: provider.id,
+    models: models
+      .filter((model) => model.provider_id === provider.id)
+      .map((model) => ({ id: provider.id, title: model.model_name })),
+  }));
+
+  console.log('Static providers:', providers);
+
+  res.json(data || []);
 });
 
 export default router;

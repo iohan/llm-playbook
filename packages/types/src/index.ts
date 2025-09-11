@@ -26,8 +26,8 @@ export type Message = {
 
 export type Provider = {
   title: string;
-  id: string;
-  models: string[];
+  id: number;
+  models: { title: string; id: number }[];
 };
 
 export type ChatRole = 'user' | 'assistant' | 'system';

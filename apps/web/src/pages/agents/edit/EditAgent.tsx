@@ -17,19 +17,21 @@ const EditAgent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`/api/agents/${id}`, {
+    fetch(`/api/agents/get-agent`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => setOriginalAgent(data));
+      body: JSON.stringify({ id: Number(id) }),
+    });
+    //.then((res) => res.json())
+    //.then((data) => setOriginalAgent(data));
 
-    fetch(`/api/providers`, {
+    /*fetch(`/api/providers`, {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
       .then((res) => res.json())
-      .then((data) => setProviders(data));
+      .then((data) => setProviders(data));*/
   }, [id]);
 
   useEffect(() => {
@@ -112,7 +114,7 @@ const EditAgent = () => {
               <div className="flex">
                 {agent?.tools.map((tool) => (
                   <div
-                    key={tool.name}
+                    key={`tool-${tool.name}`}
                     className="text-sm bg-gray-100 border border-gray-400 py-1 px-3 rounded-full hover:bg-gray-200 mr-2"
                     onClick={() => setToolsModalOpen(true)}
                   >
@@ -130,7 +132,7 @@ const EditAgent = () => {
               <input
                 type="text"
                 className="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-black/20 dark:border-neutral-700"
-                value={agent?.name}
+                defaultValue={agent?.name}
                 onChange={(e) =>
                   setAgent((prev) => (prev ? { ...prev, name: e.target.value } : prev))
                 }
@@ -141,21 +143,17 @@ const EditAgent = () => {
               <select
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 value={agent?.provider}
-                onChange={(e) =>
+                onChange={(e) => {
                   setAgent((prev) =>
-                    prev ? { ...prev, provider: e.target.value, model: '' } : prev,
-                  )
-                }
+                    prev ? { ...prev, provider: Number(e.target.value), model: undefined } : prev,
+                  );
+                }}
               >
                 <option value="" disabled>
                   Select provider
                 </option>
                 {providers.map((provider) => (
-                  <option
-                    key={provider.id}
-                    value={provider.id}
-                    selected={agent?.provider === provider.title}
-                  >
+                  <option key={`provider-${provider.id}`} value={provider.id}>
                     {provider.title}
                   </option>
                 ))}
@@ -165,9 +163,9 @@ const EditAgent = () => {
               <label className="mb-2 block text-sm">Model</label>
               <select
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-                value={agent?.model}
+                defaultValue={agent?.model}
                 onChange={(e) =>
-                  setAgent((prev) => (prev ? { ...prev, model: e.target.value } : prev))
+                  setAgent((prev) => (prev ? { ...prev, model: Number(e.target.value) } : prev))
                 }
               >
                 <option value="" disabled>
@@ -176,8 +174,8 @@ const EditAgent = () => {
                 {providers
                   .find((p) => p.id === agent?.provider)
                   ?.models.map((model) => (
-                    <option key={model} value={model} selected={agent?.model === model}>
-                      {model}
+                    <option key={`model-${model.id}`} value={model.title}>
+                      {model.title}
                     </option>
                   ))}
               </select>

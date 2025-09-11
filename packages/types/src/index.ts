@@ -16,18 +16,27 @@ export type AgentPreview = {
   liveVersion: number | null;
 };
 
-export type Agent = {
+export type Agent = BaseAgent & {
+  latestVersion: AgentVersion;
+};
+
+export type BaseAgent = {
   id: number;
   name: string;
-  prompt: string;
   description: string;
+};
+
+export type AgentVersion = {
+  id: number;
+  version: number;
+  live: boolean;
+  locked: boolean;
+  prompt: string;
+  provider_id: number;
   provider: string;
+  model_id: number;
   model: string;
-  versions: { version: number; live: boolean }[];
-  tools: Pick<ToolInfo, 'id' | 'name'>[];
-  files: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  tools?: ToolInfo[];
 };
 
 export type Message = {
@@ -50,7 +59,9 @@ export type ChatMessage = {
 };
 
 export type ToolInfo = {
-  id: string;
+  id: number;
   name: string;
+  slug: string;
   description: string;
+  inputSchema: object;
 };

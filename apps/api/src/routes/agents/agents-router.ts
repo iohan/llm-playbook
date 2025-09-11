@@ -1,74 +1,10 @@
 import { Agent, AgentPreview } from '@pkg/types';
 import { Router } from 'express';
-import { insert, sql } from '../db';
-
-const agents: Agent[] = [
-  {
-    id: 1,
-    name: 'Billy bot',
-    provider: 'anthropic',
-    model: 'claude-2',
-    description: 'En demo agent som pratar svenska',
-    prompt: 'Hej hej hej',
-    versions: [
-      { version: 3.45, live: false },
-      { version: 1.14, live: false },
-      { version: 1.15, live: true },
-    ],
-    tools: [
-      { id: 'fileTool', name: 'File tool' },
-      { id: 'dataTool', name: 'Data Tool' },
-    ],
-    files: ['file1'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 2,
-    name: 'Agent Smith',
-    provider: 'openai',
-    model: 'gpt-4',
-    description: 'A sophisticated agent for complex tasks',
-    prompt: 'You are Agent Smith, a highly intelligent AI.',
-    versions: [{ version: 2.0, live: true }],
-    tools: [],
-    files: ['fileX', 'fileY'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 3,
-    name: 'Helper Bot',
-    provider: 'openai',
-    model: 'gpt-3.5-turbo',
-    description: 'A friendly helper bot for everyday tasks',
-    prompt: 'You are a helpful assistant.',
-    versions: [{ version: 1.5, live: false }],
-    tools: [],
-    files: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 4,
-    name: 'Data Analyzer',
-    provider: 'anthropic',
-    model: 'claude-instant-100k',
-    description: 'An agent specialized in data analysis and insights',
-    prompt: 'Analyze the following data and provide insights.',
-    versions: [
-      { version: 2.1, live: false },
-      { version: 3.1, live: true },
-      { version: 4.0, live: false },
-    ],
-    tools: [],
-    files: ['dataFile1'],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+import { insert, queryOne, sql } from '../../db';
+import getAgent from './get-agent';
 
 const router = Router();
+router.post('/get-agent', getAgent);
 router.get('/', async (_req, res) => {
   const sqlQuery = `SELECT
       a.id,
@@ -109,13 +45,37 @@ router.get('/', async (_req, res) => {
   const response = await sql<AgentPreview>(sqlQuery);
   res.json(response);
 });
-router.get('/name', (_req, res) => {
-  res.json(agents.map((agent) => ({ id: agent.id, name: agent.name })));
+router.get('/name', async (_req, res) => {
+  const agents = await sql<AgentPreview>('SELECT id, name FROM agents');
+  res.json(agents);
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.json(agents.find((agent) => agent.id === Number(id)));
+  const sqlQuery = `SELECT
+      a.id,
+      a.name,
+      a.description,
+      av.prompt,
+      av.llm_provider_id as provider,
+      av.llm_model_id as model
+    FROM
+      agents a
+      INNER JOIN (
+        SELECT
+          agent_id,
+          MAX(created_at) AS latest_created
+        FROM
+          agent_versions
+        GROUP BY
+          agent_id) latest ON latest.agent_id = a.id
+      INNER JOIN agent_versions av ON av.agent_id = a.id
+        AND av.created_at = latest.latest_created
+    WHERE a.id = :id;`;
+
+  const agent = await queryOne<Agent>(sqlQuery, { id: Number(id) });
+
+  res.json({ ...agent, versions: [{ version: 1.0, live: true }], tools: [], files: [] });
 });
 
 router.post('/', async (req, res) => {

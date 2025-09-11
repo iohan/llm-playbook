@@ -31,3 +31,13 @@ export async function insert(q: string, params?: any): Promise<{ insertId: numbe
   const insertId = (result as mysql.ResultSetHeader).insertId;
   return { insertId };
 }
+
+export async function queryOne<T = any>(q: string, params?: any): Promise<T | null> {
+  const db = getDb();
+  const [rows] = await db.execute(q, params);
+  const results = rows as T[];
+  if (results?.length > 0) {
+    return results[0] ?? null;
+  }
+  return null;
+}

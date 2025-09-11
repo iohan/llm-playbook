@@ -15,8 +15,6 @@ router.get('/', async (_req, res) => {
       .map((model) => ({ id: provider.id, title: model.model_name })),
   }));
 
-  console.log('Static providers:', providers);
-
   res.json(data || []);
 });
 

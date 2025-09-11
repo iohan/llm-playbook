@@ -1,6 +1,6 @@
 import Card from './Card';
 import { useEffect, useState } from 'react';
-import { Agent, AgentPreview } from '@pkg/types';
+import { AgentPreview } from '@pkg/types';
 import ContentHeader from '../../../components/reusables/ContentHeader';
 import AddNewAgent from '../add/AddNewAgent';
 

@@ -5,6 +5,17 @@ export type HealthStatus = {
   timestamp: string;
 };
 
+export type AgentPreview = {
+  id: number;
+  name: string;
+  description: string;
+  provider: string;
+  model: string;
+  numTools: number;
+  latestVersion: number;
+  liveVersion: number | null;
+};
+
 export type Agent = {
   id: number;
   name: string;

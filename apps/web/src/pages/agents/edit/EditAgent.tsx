@@ -1,16 +1,13 @@
 import ContentHeader from '../../../components/reusables/ContentHeader';
 import Button from '../../../components/reusables/Button';
-import Modal from '../../../components/reusables/Modal';
 import { useEffect, useState } from 'react';
-import ToolsModal from './ToolsModal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Agent, Provider } from '@pkg/types';
-import { isEqual } from 'lodash';
+import { isEqual, update } from 'lodash';
 import Prompt from './Prompt';
 import ToolsSelector from './ToolsSelector';
 
 const EditAgent = () => {
-  const [toolsModalOpen, setToolsModalOpen] = useState(false);
   const [originalAgent, setOriginalAgent] = useState<Agent | null>(null);
   const [agent, setAgent] = useState<Agent>();
   const [changesMade, setChangesMade] = useState(false);
@@ -52,8 +49,9 @@ const EditAgent = () => {
 
   const saveAgent = async () => {
     if (!agent) return;
+
     await fetch(`/api/agents/${agent.id}`, {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(agent),
@@ -100,9 +98,7 @@ const EditAgent = () => {
                 type="text"
                 className="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-black/20 dark:border-neutral-700"
                 defaultValue={agent?.name}
-                onChange={(e) =>
-                  setAgent((prev) => (prev ? { ...prev, name: e.target.value } : prev))
-                }
+                onChange={(e) => updateAgentState({ name: e.target.value })}
               />
             </div>
             <div>
@@ -111,16 +107,12 @@ const EditAgent = () => {
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 value={agent?.provider_id}
                 onChange={(e) => {
-                  setAgent((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          provider: undefined,
-                          provider_id: Number(e.target.value),
-                          model_id: undefined,
-                        }
-                      : prev,
-                  );
+                  updateAgentState({
+                    provider: undefined,
+                    provider_id: Number(e.target.value),
+                    model_id: undefined,
+                    model: undefined,
+                  });
                 }}
               >
                 <option value="" disabled>
@@ -139,9 +131,7 @@ const EditAgent = () => {
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 defaultValue={agent?.model_id}
                 onChange={(e) =>
-                  setAgent((prev) =>
-                    prev ? { ...prev, model: undefined, model_id: Number(e.target.value) } : prev,
-                  )
+                  updateAgentState({ model: undefined, model_id: Number(e.target.value) })
                 }
               >
                 <option value="" disabled>
@@ -162,9 +152,7 @@ const EditAgent = () => {
                 className="min-h-[160px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 placeholder={'Description of the agent…'}
                 value={agent?.description}
-                onChange={(e) =>
-                  setAgent((prev) => (prev ? { ...prev, description: e.target.value } : prev))
-                }
+                onChange={(e) => updateAgentState({ description: e.target.value })}
               />
             </div>
             <div>

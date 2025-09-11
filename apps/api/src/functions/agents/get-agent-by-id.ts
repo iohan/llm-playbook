@@ -1,5 +1,5 @@
 import { Agent } from '@pkg/types';
-import { queryOne, sql } from '../../db';
+import { queryOne } from '../../db';
 import getLatestAgentVersion from './get-latest-agent-version';
 
 const getAgentById = async (agentId: number): Promise<Agent> => {
@@ -13,7 +13,7 @@ const getAgentById = async (agentId: number): Promise<Agent> => {
     id: baseAgent.id,
     name: baseAgent.name,
     description: baseAgent.description,
-    latestVersion: latestAgentVersion,
+    ...latestAgentVersion,
   };
 };
 

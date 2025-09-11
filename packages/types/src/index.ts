@@ -16,9 +16,7 @@ export type AgentPreview = {
   liveVersion: number | null;
 };
 
-export type Agent = BaseAgent & {
-  latestVersion: AgentVersion;
-};
+export type Agent = BaseAgent & AgentVersion;
 
 export type BaseAgent = {
   id: number;
@@ -27,15 +25,15 @@ export type BaseAgent = {
 };
 
 export type AgentVersion = {
-  id: number;
+  version_id: number;
   version: number;
   live: boolean;
   locked: boolean;
   prompt: string;
-  provider_id: number;
-  provider: string;
-  model_id: number;
-  model: string;
+  provider_id: number | undefined;
+  provider: string | undefined;
+  model_id: number | undefined;
+  model: string | undefined;
   tools?: ToolInfo[];
 };
 

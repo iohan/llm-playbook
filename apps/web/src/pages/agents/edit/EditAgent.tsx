@@ -6,11 +6,13 @@ import ToolsModal from './ToolsModal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Agent, Provider } from '@pkg/types';
 import { isEqual } from 'lodash';
+import Prompt from './Prompt';
+import ToolsSelector from './ToolsSelector';
 
 const EditAgent = () => {
   const [toolsModalOpen, setToolsModalOpen] = useState(false);
   const [originalAgent, setOriginalAgent] = useState<Agent | null>(null);
-  const [agent, setAgent] = useState<Agent | null>(null);
+  const [agent, setAgent] = useState<Agent>();
   const [changesMade, setChangesMade] = useState(false);
   const [providers, setProviders] = useState<Provider[]>([]);
   const { id } = useParams();
@@ -22,16 +24,17 @@ const EditAgent = () => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ id: Number(id) }),
-    });
-    //.then((res) => res.json())
-    //.then((data) => setOriginalAgent(data));
+    })
+      .then((res) => res.json())
+      .then((data) => setOriginalAgent(data));
 
-    /*fetch(`/api/providers`, {
+    fetch(`/api/providers/get-providers`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
       .then((res) => res.json())
-      .then((data) => setProviders(data));*/
+      .then((data) => setProviders(data));
   }, [id]);
 
   useEffect(() => {
@@ -41,12 +44,13 @@ const EditAgent = () => {
   }, [originalAgent]);
 
   useEffect(() => {
+    console.log(agent);
     if (changesMade) return;
     if (!originalAgent || !agent) return;
     setChangesMade(!isEqual(originalAgent, agent));
   }, [originalAgent, agent]);
 
-  const updateAgent = async () => {
+  const saveAgent = async () => {
     if (!agent) return;
     await fetch(`/api/agents/${agent.id}`, {
       method: 'PUT',
@@ -56,6 +60,10 @@ const EditAgent = () => {
     })
       .then((res) => res.json())
       .then(() => navigate('/agents'));
+  };
+
+  const updateAgentState = (param: Partial<Agent>) => {
+    setAgent((prev) => (prev ? { ...prev, ...param } : prev));
   };
 
   return (
@@ -71,7 +79,7 @@ const EditAgent = () => {
             <Button variant="transparent" to="/agents">
               Cancel
             </Button>
-            <Button disabled={!changesMade} onClick={() => updateAgent()}>
+            <Button disabled={!changesMade} onClick={() => saveAgent()}>
               Save
             </Button>
           </>
@@ -80,49 +88,8 @@ const EditAgent = () => {
       <div className="flex">
         <div className="w-3/4">
           <div className="flex flex-col gap-3 pr-5">
-            <div>
-              <label className="mb-2 block text-sm">Prompt</label>
-              <textarea
-                className="min-h-[260px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-                value={agent?.prompt}
-                onChange={(e) =>
-                  setAgent((prev) => (prev ? { ...prev, prompt: e.target.value } : prev))
-                }
-              />
-            </div>
-            <div>
-              <div className="mb-2 text-sm flex items-center gap-4">
-                <div>Tools</div>
-                <Button size="small" onClick={() => setToolsModalOpen(true)}>
-                  Edit
-                </Button>
-                {toolsModalOpen && (
-                  <Modal
-                    open={toolsModalOpen}
-                    onClose={() => setToolsModalOpen(false)}
-                    title="Tools"
-                  >
-                    <ToolsModal
-                      selectedTools={agent?.tools || []}
-                      setSelectedTools={(a: Agent['tools']) =>
-                        setAgent((prev) => (prev ? { ...prev, tools: a } : prev))
-                      }
-                    />
-                  </Modal>
-                )}
-              </div>
-              <div className="flex">
-                {agent?.tools.map((tool) => (
-                  <div
-                    key={`tool-${tool.name}`}
-                    className="text-sm bg-gray-100 border border-gray-400 py-1 px-3 rounded-full hover:bg-gray-200 mr-2"
-                    onClick={() => setToolsModalOpen(true)}
-                  >
-                    {tool.name}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Prompt prompt={agent?.prompt} updateAgent={updateAgentState} />
+            <ToolsSelector selectedTools={agent?.tools} updateAgent={updateAgentState} />
           </div>
         </div>
         <div className="w-1/4 border-l border-gray-200 pl-5">
@@ -142,10 +109,17 @@ const EditAgent = () => {
               <label className="mb-2 block text-sm">LLM Provider</label>
               <select
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-                value={agent?.provider}
+                value={agent?.provider_id}
                 onChange={(e) => {
                   setAgent((prev) =>
-                    prev ? { ...prev, provider: Number(e.target.value), model: undefined } : prev,
+                    prev
+                      ? {
+                          ...prev,
+                          provider: undefined,
+                          provider_id: Number(e.target.value),
+                          model_id: undefined,
+                        }
+                      : prev,
                   );
                 }}
               >
@@ -163,18 +137,20 @@ const EditAgent = () => {
               <label className="mb-2 block text-sm">Model</label>
               <select
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-                defaultValue={agent?.model}
+                defaultValue={agent?.model_id}
                 onChange={(e) =>
-                  setAgent((prev) => (prev ? { ...prev, model: Number(e.target.value) } : prev))
+                  setAgent((prev) =>
+                    prev ? { ...prev, model: undefined, model_id: Number(e.target.value) } : prev,
+                  )
                 }
               >
                 <option value="" disabled>
                   Select model
                 </option>
                 {providers
-                  .find((p) => p.id === agent?.provider)
+                  .find((p) => p.id === agent?.provider_id)
                   ?.models.map((model) => (
-                    <option key={`model-${model.id}`} value={model.title}>
+                    <option key={`model-${model.id}`} value={model.id}>
                       {model.title}
                     </option>
                   ))}

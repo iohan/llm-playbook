@@ -33,7 +33,7 @@ const getLatestAgentVersion = async (agentId: number): Promise<AgentVersion> => 
   const tools = await getAgentTools(version.id);
 
   return {
-    id: version.id,
+    version_id: version.id,
     version: version.version,
     live: version.live,
     locked: version.locked,

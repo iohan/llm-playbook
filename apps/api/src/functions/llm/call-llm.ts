@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { ContentBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 import { Agent, Message } from '@pkg/types';
-import { queryOne, sql } from '../../db';
+import { queryOne } from '../../db';
 
 interface LLMParams {
   agent: Agent;

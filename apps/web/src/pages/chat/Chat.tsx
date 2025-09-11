@@ -3,6 +3,7 @@ import ContentHeader from '../../components/reusables/ContentHeader';
 import { Agent, Message } from '@pkg/types';
 import Button from '../../components/reusables/Button';
 import { LoaderCircle } from 'lucide-react';
+import markdownToHtml from '../../components/stateless/markdown-to-html';
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,7 +27,10 @@ const Chat = () => {
   }, [selectedAgent]);
 
   const AgentText = ({ text }: { text: string }) => (
-    <div className="max-w-5/6 whitespace-pre-wrap">{text}</div>
+    <div
+      className="max-w-5/6 whitespace-pre-wrap"
+      dangerouslySetInnerHTML={{ __html: markdownToHtml(text) }}
+    />
   );
   const UserText = ({ text }: { text: string }) => (
     <div className="ml-auto max-w-5/6 bg-gray-200 border border-gray-300 py-2 px-3 rounded-2xl whitespace-pre-wrap">

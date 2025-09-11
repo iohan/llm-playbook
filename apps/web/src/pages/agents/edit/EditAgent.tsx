@@ -50,7 +50,7 @@ const EditAgent = () => {
   const saveAgent = async () => {
     if (!agent) return;
 
-    await fetch(`/api/agents/${agent.id}`, {
+    await fetch(`/api/agents/update-agent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

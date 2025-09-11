@@ -2,9 +2,11 @@ import { Agent, AgentPreview } from '@pkg/types';
 import { Router } from 'express';
 import { insert, queryOne, sql } from '../../db';
 import getAgent from './get-agent';
+import updateAgent from './update-agent';
 
 const router = Router();
 router.post('/get-agent', getAgent);
+router.post('/update-agent', updateAgent);
 router.get('/', async (_req, res) => {
   const sqlQuery = `SELECT
       a.id,

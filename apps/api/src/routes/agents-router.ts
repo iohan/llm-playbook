@@ -1,5 +1,6 @@
 import { Agent } from '@pkg/types';
 import { Router } from 'express';
+import { insert, sql } from '../db';
 
 const agents: Agent[] = [
   {
@@ -80,23 +81,31 @@ router.get('/:id', (req, res) => {
   res.json(agents.find((agent) => agent.id === Number(id)));
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { name, provider, model, description } = req.body;
-  const newAgent: Agent = {
-    id: agents.length + 1,
-    name,
-    description,
-    model,
-    versions: [{ version: 0.1, live: false }],
-    tools: [],
-    files: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    prompt: '',
-    provider,
-  };
-  agents.push(newAgent);
-  res.status(201).json(newAgent);
+
+  const response = await insert(
+    'INSERT INTO agents (user_id, name, description) VALUES (:userId, :name, :description)',
+    { userId: 1, name, description },
+  );
+
+  if (!response.insertId) {
+    return res.status(500).json({ message: 'Failed to create agent' });
+  }
+
+  await insert(
+    'INSERT INTO agent_versions (user_id, agent_id, version, prompt, llm_provider_id, llm_model_id) VALUES (:userId, :agentId, :version, :prompt, :llm_provider_id, :llm_model_id)',
+    {
+      userId: 1,
+      agentId: response.insertId,
+      version: 1,
+      prompt: '',
+      llm_provider_id: 1,
+      llm_model_id: 1,
+    },
+  );
+
+  res.status(201).json();
 });
 
 router.put('/:id', (req, res) => {

@@ -1,7 +1,11 @@
 import { Agent } from '@pkg/types';
+import { sql } from '../../db';
 
 const getAgentById = async (agentId: number): Promise<Agent> => {
-  // Simulate fetching agent data from a database or external service
+  const rows = await sql('SELECT a.id as id, a.name as name FROM agents WHERE id = :agentId', {
+    agentId,
+  });
+
   return {
     id: agentId,
     name: 'Sample Agent',

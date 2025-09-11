@@ -129,7 +129,7 @@ const EditAgent = () => {
               <label className="mb-2 block text-sm">Model</label>
               <select
                 className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
-                defaultValue={agent?.model_id}
+                value={agent?.model_id}
                 onChange={(e) =>
                   updateAgentState({ model: undefined, model_id: Number(e.target.value) })
                 }

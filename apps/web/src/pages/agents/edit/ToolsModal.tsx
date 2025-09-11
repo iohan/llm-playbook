@@ -14,7 +14,8 @@ const ToolsModal = ({
   const [availableTools, setAvailableTools] = useState<ToolInfo[]>([]);
 
   useEffect(() => {
-    fetch(`/api/tools`, {
+    fetch(`/api/tools/get-all-tools`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
@@ -33,10 +34,10 @@ const ToolsModal = ({
 
   const toggleTool = (tool: ToolInfo | null) => {
     if (!tool) return;
-    if (selectedTools.some((st) => st.id === tool.id)) {
+    if (selectedTools?.some((st) => st.id === tool.id)) {
       setSelectedTools(selectedTools.filter((t) => t.id !== tool.id));
     } else {
-      setSelectedTools([...selectedTools, tool]);
+      setSelectedTools([...(selectedTools ?? []), tool]);
     }
   };
 
@@ -51,7 +52,7 @@ const ToolsModal = ({
           if (!t) return null;
           return <Pill key={t.id} name={t.name} onRemove={() => toggleTool(t)} />;
         })}
-        {selectedTools.length === 0 && (
+        {selectedTools?.length === 0 && (
           <div className="text-sm text-gray-500">No tools selected</div>
         )}
       </div>
@@ -59,7 +60,7 @@ const ToolsModal = ({
         <select
           className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
           onChange={(e) =>
-            setToolPreview(availableTools.find((t) => t.id === e.target.value) || null)
+            setToolPreview(availableTools.find((t) => t.id === Number(e.target.value)) || null)
           }
           defaultValue=""
         >
@@ -73,7 +74,7 @@ const ToolsModal = ({
           ))}
         </select>
         <Button onClick={() => toggleTool(toolPreview)} disabled={!toolPreview}>
-          {selectedTools.some((t) => t.id === toolPreview?.id) ? 'Remove' : 'Add'}
+          {selectedTools?.some((t) => t.id === toolPreview?.id) ? 'Remove' : 'Add'}
         </Button>
       </div>
       <div className="mt-4 text-sm text-gray-500">

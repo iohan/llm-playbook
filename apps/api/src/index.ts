@@ -6,7 +6,7 @@ import { healthHandler } from './routes/health.js';
 import agentsRouter from './routes/agents/agents-router.js';
 import chatRouter from './routes/chat-router.js';
 import providersRouter from './routes/providers/providers-router.js';
-import toolsRouter from './routes/tools-router.js';
+import toolsRouter from './routes/tools/tools-router.js';
 
 const app = express();
 

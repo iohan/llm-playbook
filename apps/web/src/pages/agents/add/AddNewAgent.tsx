@@ -20,7 +20,8 @@ const AddNewAgent = () => {
   });
 
   useEffect(() => {
-    fetch('/api/providers', {
+    fetch('/api/providers/get-providers', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })

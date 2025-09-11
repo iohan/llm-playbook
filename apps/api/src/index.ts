@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
-import { healthHandler } from './routes/health.js';
+dotenv.config();
+
 import agentsRouter from './routes/agents/agents-router.js';
 import chatRouter from './routes/chat-router.js';
 import providersRouter from './routes/providers/providers-router.js';
@@ -12,9 +14,6 @@ const app = express();
 
 app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') ?? true }));
 app.use(express.json());
-
-// Healthcheck
-app.get('/health', healthHandler);
 
 app.use('/api/agents', agentsRouter);
 app.use('/api/providers', providersRouter);

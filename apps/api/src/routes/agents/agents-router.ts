@@ -1,6 +1,6 @@
-import { Agent, AgentPreview } from '@pkg/types';
+import { AgentPreview } from '@pkg/types';
 import { Router } from 'express';
-import { insert, queryOne, sql } from '../../db';
+import { insert, sql } from '../../db';
 import getAgent from './get-agent';
 import updateAgent from './update-agent';
 
@@ -52,34 +52,6 @@ router.get('/name', async (_req, res) => {
   res.json(agents);
 });
 
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const sqlQuery = `SELECT
-      a.id,
-      a.name,
-      a.description,
-      av.prompt,
-      av.llm_provider_id as provider,
-      av.llm_model_id as model
-    FROM
-      agents a
-      INNER JOIN (
-        SELECT
-          agent_id,
-          MAX(created_at) AS latest_created
-        FROM
-          agent_versions
-        GROUP BY
-          agent_id) latest ON latest.agent_id = a.id
-      INNER JOIN agent_versions av ON av.agent_id = a.id
-        AND av.created_at = latest.latest_created
-    WHERE a.id = :id;`;
-
-  const agent = await queryOne<Agent>(sqlQuery, { id: Number(id) });
-
-  res.json({ ...agent, versions: [{ version: 1.0, live: true }], tools: [], files: [] });
-});
-
 router.post('/', async (req, res) => {
   const { name, provider, model, description } = req.body;
 
@@ -105,31 +77,6 @@ router.post('/', async (req, res) => {
   );
 
   res.status(201).json({});
-});
-
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, tools, prompt, description, provider, model } = req.body;
-  const agentIndex = agents.findIndex((agent) => agent.id === Number(id));
-  if (agentIndex !== -1) {
-    const createdAt = agents[agentIndex]?.createdAt ?? new Date();
-    agents[agentIndex] = {
-      id: Number(id),
-      name,
-      description,
-      prompt,
-      provider,
-      model,
-      versions: [{ version: 1.0, live: true }],
-      tools,
-      files: [],
-      createdAt,
-      updatedAt: new Date(),
-    };
-    res.json(agents[agentIndex]);
-  } else {
-    res.status(404).json({ message: 'Agent not found' });
-  }
 });
 
 export default router;

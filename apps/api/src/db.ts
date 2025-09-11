@@ -4,7 +4,6 @@ let pool: mysql.Pool | null = null;
 
 const getDb = () => {
   if (!pool) {
-    console.log(process.env.MYSQL_ROOT_PASSWORD);
     pool = mysql.createPool({
       host: 'localhost',
       user: process.env.MYSQL_USER,

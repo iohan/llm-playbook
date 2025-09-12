@@ -13,6 +13,7 @@
     "@pkg/types": "workspace:*",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/vite": "^4.1.13",
+    "@tanstack/react-table": "^8.21.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
     "lodash": "^4.17.21",

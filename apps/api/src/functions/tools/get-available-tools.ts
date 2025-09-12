@@ -3,7 +3,7 @@ import { sql } from '../../db';
 
 const getAvailableTools = async () => {
   const tools = await sql<ToolInfo>(
-    'SELECT id, tool_name as name, description, tool_slug as slug, input_schema as inputSchema FROM tools',
+    'SELECT id, tool_name as name, description, tool_slug as slug, input_schema as inputSchema, updated_at as updatedAt FROM tools',
     {},
   );
 

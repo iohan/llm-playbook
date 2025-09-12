@@ -8,7 +8,7 @@ router.post('/', async (req: Request, res: Response) => {
 
   const llmResponse = await resolveUserMessage({ agentId, messages: history });
 
-  const answer = { reply: llmResponse };
+  const answer = { reply: llmResponse ?? 'Error: Unable to get a valid response from the LLM.' };
   res.json(answer);
 });
 

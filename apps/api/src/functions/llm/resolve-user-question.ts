@@ -14,7 +14,7 @@ const resolveUserMessage = async ({
   const { content, stop_reason, usage } = await callLLM({ agent, messages });
   // Usage can be logged or processed further if needed
 
-  if (stop_reason === 'end_turn' && content[0]?.type === 'text') {
+  if ((stop_reason === 'end_turn' || stop_reason === 'max_tokens') && content[0]?.type === 'text') {
     return content[0]?.text;
   }
 

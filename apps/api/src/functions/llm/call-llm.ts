@@ -30,7 +30,7 @@ const callLLM = async (params: LLMParams): Promise<LLMResponse> => {
 
   const response = await provider.messages.create({
     model: model_response?.model_api_name,
-    max_tokens: 1000,
+    max_tokens: 2500,
     temperature: 0.2,
     system: params.agent.prompt,
     messages: params.messages,

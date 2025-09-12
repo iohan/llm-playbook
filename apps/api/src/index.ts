@@ -9,6 +9,7 @@ import agentsRouter from './routes/agents/agents-router.js';
 import chatRouter from './routes/chat-router.js';
 import providersRouter from './routes/providers/providers-router.js';
 import toolsRouter from './routes/tools/tools-router.js';
+import toolManagerRouter from './routes/tool-manager/tool-manager-router.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/agents', agentsRouter);
 app.use('/api/providers', providersRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/tools', toolsRouter);
+app.use('/api/tool-manager', toolManagerRouter);
 
 const port = Number(process.env.PORT ?? 4000);
 app.listen(port, () => {

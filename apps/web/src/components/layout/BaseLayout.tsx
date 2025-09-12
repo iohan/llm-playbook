@@ -1,9 +1,16 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, ChevronRight, ChevronsUpDown, PanelRight, SquareTerminal } from 'lucide-react';
+import {
+  Bot,
+  ChevronRight,
+  ChevronsUpDown,
+  PanelRight,
+  SquareTerminal,
+  ToolCase,
+} from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import useSettings from '../../stores/useSettings';
-import { Agent } from '@pkg/types';
+import { Agent, ToolInfo } from '@pkg/types';
 
 const UserProfile = () => {
   return (
@@ -166,6 +173,16 @@ const BaseLayout = () => {
                   ? agents.map((agent) => ({ title: agent.name, url: `/agents/${agent.id}` }))
                   : []
               }
+            />
+            <Section
+              id="tools"
+              title="Tools"
+              url="/tools"
+              icon={<ToolCase className="w-5 h-5" />}
+              items={[
+                { title: 'List tools', url: '/tools' },
+                { title: 'Add tool', url: '/tools/add-new' },
+              ]}
             />
           </div>
         </Sidebar>

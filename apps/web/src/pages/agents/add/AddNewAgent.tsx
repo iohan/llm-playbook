@@ -40,7 +40,6 @@ const AddNewAgent = () => {
     if (res.ok) {
       setOpen(false);
     }
-    console.log(res.json());
   };
 
   return (

@@ -11,7 +11,7 @@ const getAgentTools = async (agentVersionId: number): Promise<ToolInfo[]> => {
       t.input_schema as inputSchema
     FROM
       agent_tools agt
-      INNER JOIN tools t ON t.id = agt.tool_id
+      INNER JOIN tools t ON t.id = agt.tool_id and t.active = 1
     WHERE
       agt.agent_version_id = :agentVersionId;
 `;

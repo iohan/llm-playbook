@@ -63,4 +63,5 @@ export type ToolInfo = {
   description: string;
   inputSchema: object;
   updatedAt: string;
+  active: boolean;
 };

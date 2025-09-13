@@ -41,7 +41,6 @@ const EditAgent = () => {
   }, [originalAgent]);
 
   useEffect(() => {
-    console.log(agent);
     if (changesMade) return;
     if (!originalAgent || !agent) return;
     setChangesMade(!isEqual(originalAgent, agent));

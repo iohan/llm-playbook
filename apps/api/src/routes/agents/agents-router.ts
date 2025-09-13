@@ -16,7 +16,7 @@ router.get('/', async (_req, res) => {
       lm.model_name AS model,
       av.version AS latestVersion,
       live.version AS liveVersion,
-      COUNT(agt.id) AS numTools
+      COUNT(t.id) AS numTools
     FROM
       agents a
       INNER JOIN (
@@ -40,6 +40,7 @@ router.get('/', async (_req, res) => {
       INNER JOIN llm_models lm ON lm.id = av.llm_model_id
       INNER JOIN llm_providers lp ON lp.id = av.llm_provider_id
       LEFT JOIN agent_tools agt ON agt.agent_version_id = av.id
+      LEFT JOIN tools t ON t.id = agt.tool_id AND t.active = 1
     GROUP BY
       a.id,
       av.id;`;

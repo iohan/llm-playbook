@@ -22,10 +22,6 @@ const Chat = () => {
       .then((data) => setAgents(data));
   }, []);
 
-  useEffect(() => {
-    console.log('Selected agent changed:', selectedAgent);
-  }, [selectedAgent]);
-
   const AgentText = ({ text }: { text: string }) => (
     <div
       className="max-w-5/6 whitespace-pre-wrap"

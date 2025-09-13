@@ -43,6 +43,7 @@ const DataTable = <TData, TValue>({ columns, data }: ToolsTableProps<TData, TVal
               {headerGroup.headers.map((header) => {
                 return (
                   <th
+                    key={header.id}
                     data-slot="table-head"
                     className={cn(
                       'text-gray-950 h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',

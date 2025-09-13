@@ -4,18 +4,20 @@ import { ToolInfo } from '@pkg/types';
 import DataTable from '../../../components/reusables/DataTable';
 import useColumns from './use-columns';
 
+export type Tool = ToolInfo & { used: number };
 export type Actions = {
-  toggleActive?: (p: { id: number; row: ToolInfo }) => void;
+  toggleActive?: (p: { id: number; row: Tool }) => void;
 };
 
 const AgentsList = () => {
-  const [tools, setTools] = useState<ToolInfo[]>([]);
+  const [tools, setTools] = useState<Tool[]>([]);
 
   const actions: Actions = {
-    toggleActive: (p: { id: number; row: ToolInfo }) => {
+    toggleActive: (p: { id: number; row: Tool }) => {
       setTools((prev) =>
         prev.map((tool) => (tool.id === p.id ? { ...tool, active: !tool.active } : tool)),
       );
+
       fetch('/api/tool-manager/toggle-tool', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

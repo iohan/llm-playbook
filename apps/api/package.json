@@ -7,6 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --dts --splitting --clean",
     "start": "node dist/index.js",
+    "generate-tools": "tsx src/cli/generate-tools.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "migrate": "tsx src/db-migrate.ts",
     "migrate:build": "node dist/db-migrate.js"

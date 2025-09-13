@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ContentHeader from '../../../components/reusables/ContentHeader';
 import { ToolInfo } from '@pkg/types';
 import DataTable from '../../../components/reusables/DataTable';
-import useColumns from './columns';
+import useColumns from './use-columns';
 
 export type Actions = {
   toggleActive?: (p: { id: number; row: ToolInfo }) => void;

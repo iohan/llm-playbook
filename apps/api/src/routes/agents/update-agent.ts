@@ -5,36 +5,43 @@ import { sql } from '../../db';
 export default async (req: Request, res: Response) => {
   const agent: Agent = req.body;
 
-  // Update base agent
-  await sql('UPDATE agents SET name = :name, description = :description WHERE id = :id', {
-    name: agent.name,
-    description: agent.description,
-    id: agent.id,
-  });
-
-  // Update agent version
+  // Update agent
   await sql(
-    'UPDATE agent_versions SET prompt = :prompt, llm_provider_id = :provider_id, llm_model_id = :model_id WHERE id = :version_id',
+    `
+      UPDATE
+        agents
+      SET
+        name = :name,
+        description = :description,
+        prompt = :prompt,
+        providerId = :providerId,
+        modelId = :modelId
+      WHERE
+        id = :id
+      `,
     {
+      name: agent.name,
+      description: agent.description,
       prompt: agent.prompt,
-      provider_id: agent.provider_id,
-      model_id: agent.model_id,
-      version_id: agent.version_id,
+      providerId: agent.providerId,
+      modelId: agent.modelId,
+      id: agent.id,
     },
   );
 
   // For simplicity, we'll delete all existing tools and re-insert them
-  await sql('DELETE FROM agent_tools WHERE agent_version_id = :version_id', {
-    version_id: agent.version_id,
+  await sql('DELETE FROM agent_tools WHERE agentId = :agentId', {
+    agentId: agent.id,
   });
 
   if (agent.tools && agent.tools.length > 0) {
     agent.tools.forEach(async (tool) => {
       await sql(
-        'INSERT INTO agent_tools (agent_version_id, tool_id) VALUES (:agent_version_id, :tool_id)',
+        'INSERT INTO agent_tools (userId, agentId, toolId) VALUES (:userId, :agentId, :toolId)',
         {
-          agent_version_id: agent.version_id,
-          tool_id: tool.id,
+          userId: 1,
+          agentId: agent.id,
+          toolId: tool.id,
         },
       );
     });

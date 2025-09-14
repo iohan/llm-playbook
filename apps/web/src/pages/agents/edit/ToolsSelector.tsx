@@ -1,4 +1,4 @@
-import { Agent, ToolInfo } from '@pkg/types';
+import { Agent, AgentTool } from '@pkg/types';
 import Button from '../../../components/reusables/Button';
 import Modal from '../../../components/reusables/Modal';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ const ToolsSelector = ({
   selectedTools,
   updateAgent,
 }: {
-  selectedTools: ToolInfo[] | undefined;
+  selectedTools: AgentTool[] | undefined;
   updateAgent: (params: Partial<Agent>) => void;
 }) => {
   const [toolsModalOpen, setToolsModalOpen] = useState(false);

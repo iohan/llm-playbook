@@ -10,9 +10,9 @@ const getAgentTools = async (agentId: number): Promise<AgentTool[]> => {
       t.description as description
     FROM
       agent_tools agt
-      INNER JOIN tools t ON t.id = agt.tool_id and t.active = 1
+      INNER JOIN tools t ON t.id = agt.toolId and t.active = 1
     WHERE
-      agt.agent_id = :agentId;
+      agt.agentId = :agentId;
 `;
   const tools = await sql(sqlQuery, { agentId });
 

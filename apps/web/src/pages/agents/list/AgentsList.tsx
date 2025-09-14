@@ -1,14 +1,15 @@
 import Card from './Card';
 import { useEffect, useState } from 'react';
-import { AgentPreview } from '@pkg/types';
+import { Agent } from '@pkg/types';
 import ContentHeader from '../../../components/reusables/ContentHeader';
 import AddNewAgent from '../add/AddNewAgent';
 
 const AgentsList = () => {
-  const [agents, setAgents] = useState<AgentPreview[] | null>(null);
+  const [agents, setAgents] = useState<Agent[] | null>(null);
 
   useEffect(() => {
-    fetch('/api/agents', {
+    fetch('/api/agents/list-agents', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })

@@ -3,51 +3,13 @@ import { Router } from 'express';
 import { insert, sql } from '../../db';
 import getAgent from './get-agent';
 import updateAgent from './update-agent';
+import getAllAgents from './get-all-agents';
 
 const router = Router();
 router.post('/get-agent', getAgent);
 router.post('/update-agent', updateAgent);
-router.get('/', async (_req, res) => {
-  const sqlQuery = `SELECT
-      a.id,
-      a.name,
-      a.description,
-      lp.provider_name AS provider,
-      lm.model_name AS model,
-      av.version AS latestVersion,
-      live.version AS liveVersion,
-      COUNT(t.id) AS numTools
-    FROM
-      agents a
-      INNER JOIN (
-        SELECT
-          agent_id,
-          MAX(created_at) AS latest_created
-        FROM
-          agent_versions
-        GROUP BY
-          agent_id) latest ON latest.agent_id = a.id
-      LEFT JOIN (
-        SELECT
-          agent_id,
-          version
-        FROM
-          agent_versions
-        WHERE
-          live = 1) live ON live.agent_id = a.id
-      INNER JOIN agent_versions av ON av.agent_id = a.id
-        AND av.created_at = latest.latest_created
-      INNER JOIN llm_models lm ON lm.id = av.llm_model_id
-      INNER JOIN llm_providers lp ON lp.id = av.llm_provider_id
-      LEFT JOIN agent_tools agt ON agt.agent_version_id = av.id
-      LEFT JOIN tools t ON t.id = agt.tool_id AND t.active = 1
-    GROUP BY
-      a.id,
-      av.id;`;
+router.post('/list-agents', getAllAgents);
 
-  const response = await sql<AgentPreview>(sqlQuery);
-  res.json(response);
-});
 router.get('/name', async (_req, res) => {
   const agents = await sql<AgentPreview>('SELECT id, name FROM agents');
   res.json(agents);

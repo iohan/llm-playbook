@@ -1,19 +1,40 @@
 import { Agent } from '@pkg/types';
 import { queryOne } from '../../db';
-import getLatestAgentVersion from './get-latest-agent-version';
+import getAgentTools from './get-agent-tools';
 
-const getAgentById = async (agentId: number): Promise<Agent> => {
-  const baseAgent = await queryOne('SELECT id, name, description FROM agents WHERE id = :id', {
-    id: agentId,
-  });
+const getAgentById = async (agentId: number): Promise<Agent | null> => {
+  const agent = await queryOne<Omit<Agent, 'tools'>>(
+    `
+    SELECT
+      a.id,
+      a.name,
+      a.prompt,
+      a.providerId,
+      lp.providerName,
+      a.modelId,
+      lm.modelName,
+      a.description
+    FROM
+      agents a
+      LEFT JOIN llm_providers lp ON lp.id = a.providerId
+      LEFT JOIN llm_models lm ON lm.id = a.modelId
+    WHERE
+      a.id = :agentId;
+    `,
+    {
+      agentId,
+    },
+  );
 
-  const latestAgentVersion = await getLatestAgentVersion(baseAgent.id);
+  if (!agent) {
+    return null;
+  }
+
+  const tools = await getAgentTools(agent.id);
 
   return {
-    id: baseAgent.id,
-    name: baseAgent.name,
-    description: baseAgent.description,
-    ...latestAgentVersion,
+    ...agent,
+    tools,
   };
 };
 

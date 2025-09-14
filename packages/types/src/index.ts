@@ -16,25 +16,16 @@ export type AgentPreview = {
   liveVersion: number | null;
 };
 
-export type Agent = BaseAgent & AgentVersion;
-
-export type BaseAgent = {
+export type Agent = {
   id: number;
   name: string;
-  description: string;
-};
-
-export type AgentVersion = {
-  version_id: number;
-  version: number;
-  live: boolean;
-  locked: boolean;
-  prompt: string;
-  provider_id: number | undefined;
-  provider: string | undefined;
-  model_id: number | undefined;
-  model: string | undefined;
-  tools?: ToolInfo[];
+  prompt?: string;
+  providerId: number | undefined;
+  providerName: string | undefined;
+  modelId: number | undefined;
+  modelName: string | undefined;
+  description?: string;
+  tools?: AgentTool[];
 };
 
 export type Message = {
@@ -56,10 +47,12 @@ export type ChatMessage = {
   createdAt: string;
 };
 
+export type AgentTool = Omit<ToolInfo, 'active'>;
+
 export type ToolInfo = {
   id: number;
   name: string;
-  slug: string;
+  className: string;
   description: string;
   active: boolean;
 };

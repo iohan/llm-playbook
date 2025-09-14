@@ -1,20 +1,20 @@
-import { ToolInfo } from '@pkg/types';
+import { AgentTool } from '@pkg/types';
 import { sql } from '../../db';
 
-const getAgentTools = async (agentVersionId: number): Promise<ToolInfo[]> => {
+const getAgentTools = async (agentId: number): Promise<AgentTool[]> => {
   const sqlQuery = `
     SELECT
       t.id as id,
-      t.tool_name as name,
-      t.tool_slug as slug,
+      t.toolName as name,
+      t.toolClass as className,
       t.description as description
     FROM
       agent_tools agt
       INNER JOIN tools t ON t.id = agt.tool_id and t.active = 1
     WHERE
-      agt.agent_version_id = :agentVersionId;
+      agt.agent_id = :agentId;
 `;
-  const tools = await sql(sqlQuery, { agentVersionId });
+  const tools = await sql(sqlQuery, { agentId });
 
   return tools ?? [];
 };

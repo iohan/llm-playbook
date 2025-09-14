@@ -1,5 +1,0 @@
-ALTER TABLE tools
-MODIFY COLUMN checksum CHAR(64) NULL;
-
-ALTER TABLE tools
-DROP COLUMN filename;

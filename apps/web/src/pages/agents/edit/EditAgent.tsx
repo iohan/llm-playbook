@@ -3,7 +3,7 @@ import Button from '../../../components/reusables/Button';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Agent, Provider } from '@pkg/types';
-import { isEqual, update } from 'lodash';
+import { isEqual } from 'lodash';
 import Prompt from './Prompt';
 import ToolsSelector from './ToolsSelector';
 
@@ -153,23 +153,6 @@ const EditAgent = () => {
                 value={agent?.description}
                 onChange={(e) => updateAgentState({ description: e.target.value })}
               />
-            </div>
-            <div>
-              <div className="mb-2 text-sm">Versions</div>
-              <ul>
-                <li className="mb-2 flex items-center justify-between rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
-                  <span>v1.0.0</span>
-                  <button className="rounded-xl bg-black px-3 py-1 text-xs text-white hover:opacity-80 transition">
-                    Show
-                  </button>
-                </li>
-                <li className="mb-2 flex items-center justify-between rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm">
-                  <span>v0.9.0</span>
-                  <button className="rounded-xl bg-black px-3 py-1 text-xs text-white hover:opacity-80 transition">
-                    Show
-                  </button>
-                </li>
-              </ul>
             </div>
           </div>
         </div>

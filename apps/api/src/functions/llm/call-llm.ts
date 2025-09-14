@@ -18,9 +18,9 @@ const callLLM = async (params: LLMParams): Promise<LLMResponse> => {
   // All run on Anthropic for now
   const provider = new Anthropic();
   const model_response = await queryOne<{ model_api_name: string }>(
-    'SELECT model_api_name FROM llm_models WHERE id = :id',
+    'SELECT modelApiName FROM llm_models WHERE id = :id',
     {
-      id: params.agent.model_id,
+      id: params.agent.modelId,
     },
   );
 

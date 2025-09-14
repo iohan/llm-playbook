@@ -10,7 +10,7 @@
     "generate-tools": "tsx src/cli/generate-tools.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "migrate": "tsx src/db-migrate.ts",
-    "migrate:build": "node dist/db-migrate.js"
+    "seed": "tsx src/db-seed.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.62.0",

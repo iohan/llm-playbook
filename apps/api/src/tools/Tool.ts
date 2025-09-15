@@ -10,7 +10,7 @@ export type ToolInvokeArgs = Record<string, unknown>;
 export type ToolInvokeResult = unknown;
 
 export abstract class Tool {
-  abstract name: string;
+  abstract className: string;
   abstract description: string;
   abstract schema: z.ZodTypeAny;
 
@@ -23,7 +23,7 @@ export abstract class Tool {
         : base;
 
     return {
-      name: this.name,
+      name: this.className,
       description: this.description,
       input_schema,
     };

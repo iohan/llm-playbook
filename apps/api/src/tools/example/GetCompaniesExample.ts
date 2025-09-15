@@ -3,6 +3,7 @@ import { Tool, ToolInvokeArgs, ToolInvokeResult } from '../Tool';
 
 export default class GetCompaniesExample extends Tool {
   name = 'Get Companies Example';
+  className = 'GetCompaniesExample';
   description = 'Get a list of companies.';
   schema = z
     .object({

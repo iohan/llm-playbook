@@ -6,7 +6,6 @@ const getAgentTools = async (agentId: number): Promise<AgentTool[]> => {
     SELECT
       t.id as id,
       t.toolName as name,
-      t.toolClass as className,
       t.description as description
     FROM
       agent_tools agt

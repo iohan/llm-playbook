@@ -64,7 +64,7 @@ const main = async () => {
     return;
   }
 
-  const tools: Array<{ name: string; className: string; description: string; checksum: string }> =
+  const tools: Array<{ name: string; filename: string; description: string; checksum: string }> =
     [];
   try {
     for (const file of files) {
@@ -77,7 +77,7 @@ const main = async () => {
       const instance: Tool = new ToolClass();
 
       const name = instance.name;
-      const filename = path.relative(root, file);
+      const filename = path.relative(toolsDir, file);
       const className = instance.constructor.name;
       const description = instance.description;
 
@@ -88,7 +88,7 @@ const main = async () => {
 
       const checksum = checksumHex(stableStringify({ className, filename }));
 
-      tools.push({ name, className, description, checksum });
+      tools.push({ name, filename, description, checksum });
     }
   } catch (err) {
     console.error('Error when importin tool class:', err);
@@ -109,7 +109,7 @@ const main = async () => {
 
   for (const t of newTools) {
     await insert(
-      'INSERT INTO tools (toolName, toolClass, description, active, checksum) VALUES (:name, :className, :description, 0, :checksum)',
+      'INSERT INTO tools (toolName, description, active, checksum, filename) VALUES (:name, :description, 0, :checksum, :filename)',
       t,
     );
   }

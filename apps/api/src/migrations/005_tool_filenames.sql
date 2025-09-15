@@ -1,0 +1,3 @@
+ALTER TABLE tools
+ADD COLUMN filename VARCHAR(255) NOT NULL DEFAULT '' AFTER checksum,
+DROP COLUMN toolClass;

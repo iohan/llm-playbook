@@ -47,12 +47,12 @@ export type ChatMessage = {
   createdAt: string;
 };
 
-export type AgentTool = Omit<ToolInfo, 'active'>;
+export type AgentTool = Omit<ToolInfo, 'active' | 'filename'>;
 
 export type ToolInfo = {
   id: number;
   name: string;
-  className: string;
+  filename: string;
   description: string;
   active: boolean;
 };

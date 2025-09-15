@@ -2,6 +2,9 @@ import Anthropic from '@anthropic-ai/sdk';
 import { ContentBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 import { Agent, Message } from '@pkg/types';
 import { queryOne } from '../../db';
+import ToolManager from '../../tools/ToolManager';
+import getToolSchemas from '../tools/get-tool-schemas';
+import { AnthropicTool } from '../../tools/Tool';
 
 interface LLMParams {
   agent: Agent;
@@ -13,7 +16,7 @@ interface LLMResponse {
   usage: any;
 }
 
-const callLLM = async (params: LLMParams): Promise<LLMResponse> => {
+const callLLM = async (params: LLMParams): Promise<LLMResponse | undefined> => {
   console.log('Calling LLM with params:', params);
   // All run on Anthropic for now
   const provider = new Anthropic();
@@ -23,6 +26,11 @@ const callLLM = async (params: LLMParams): Promise<LLMResponse> => {
       id: params.agent.modelId,
     },
   );
+
+  let tools: AnthropicTool[] = [];
+  if (params.agent.tools && params.agent.tools.length > 0) {
+    tools = (await getToolSchemas(params.agent.tools?.map((t) => t.id))) ?? [];
+  }
 
   if (!model_response) throw new Error('LLM model not found');
 
@@ -34,6 +42,7 @@ const callLLM = async (params: LLMParams): Promise<LLMResponse> => {
     temperature: 0.2,
     system: params.agent.prompt,
     messages: params.messages,
+    ...(tools.length > 0 ? { tools } : {}),
   });
 
   console.log('LLM response:', response);
